@@ -36,7 +36,7 @@ import ch.idsia.agents.controllers.ScaredAgent;
 import ch.idsia.benchmark.mario.environments.Environment;
 import ch.idsia.benchmark.mario.environments.MarioEnvironment;
 import ch.idsia.tools.MarioAIOptions;
-import mctsMario.BabbysFirstMario;
+import mctsMario.BabbysFirstMarioAgent;
 
 /**
  * Created by IntelliJ IDEA.
@@ -54,7 +54,7 @@ public static void main(String[] args)
     String options = "-zs 1 -ls 16 -vis on";
     System.out.print(options);
     Environment environment = MarioEnvironment.getInstance();
-    Agent agent = new BabbysFirstMario();
+    Agent agent = new BabbysFirstMarioAgent();
     environment.reset(options);
     while (!environment.isLevelFinished())
     {

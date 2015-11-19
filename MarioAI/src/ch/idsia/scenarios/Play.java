@@ -35,6 +35,7 @@ import ch.idsia.tools.MarioAIOptions; /**
  * Date: May 5, 2009
  * Time: 12:46:43 PM
  */
+import mctsMario.BabbysFirstMarioAgent;
 
 /**
  * The <code>Play</code> class shows how simple is to run a MarioAI Benchmark.
@@ -61,6 +62,8 @@ public final class Play
 public static void main(String[] args)
 {
     final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
+    System.out.println(marioAIOptions.getAgentFullLoadName());
+    marioAIOptions.setAgent(new BabbysFirstMarioAgent());
     final BasicTask basicTask = new BasicTask(marioAIOptions);
     marioAIOptions.setVisualization(true);
 //        basicTask.reset(marioAIOptions);
