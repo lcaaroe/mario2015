@@ -34,8 +34,6 @@ import ch.idsia.benchmark.mario.environments.MarioEnvironment;
 import mctsMario.level.Level;
 import mctsMario.sprites.Mario;
 
-import java.util.Random;
-
 /**
  * Created by IntelliJ IDEA.
  * User: Sergey Karakovskiy
@@ -45,64 +43,64 @@ import java.util.Random;
  */
 public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 {
-public BabbysFirstMarioAgent()
-{
-    super("Babby");
-    //babby
-    reset();
-}
-
-public boolean[] getAction()
-{
-	Environment environment = MarioEnvironment.getInstance();
-	byte[][] cloned = environment.getLevelSceneObservationZ(0);
-	float[] enemies = environment.getEnemiesFloatPos();
-	float[] realMarioPos = environment.getMarioFloatPos();
-	
-	
-	System.out.println(realMarioPos[0]+","+realMarioPos[1]);
-	
-	LevelScene test = new LevelScene();
-	test.level = new Level(1500, 15);
-	test.resetDefault();
-	test.mario.x = realMarioPos[0];
-	//test.mario.xa = (realMarioPos[0] - lastX) *0.89f;
-	//if (Math.abs(test.mario.y - realMarioPos[1]) > 0.1f)
-		//test.mario.ya = (realMarioPos[1] - lastY) * 0.85f;// + 3f;
-
-	test.mario.y = realMarioPos[1];
-	
-	test.setLevelScene(cloned);
-	test.setEnemies(enemies);
-	System.out.println("Simulated Enemies: "+test.getEnemiesFloatPos().length);
-	float[] testEnemies = test.getEnemiesFloatPos();
-	if(testEnemies.length > 0)
-		System.out.println("First Entry: "+ testEnemies[0]);
-	float[] simMarioPos = test.getMarioFloatPos();
-	if(enemies.length != test.getEnemiesFloatPos().length)
+	private float lastX = 0;
+	private float lastY = 0;
+	public BabbysFirstMarioAgent()
 	{
-		System.out.println("NOT THE SAME NUMBER OF ENEMIES!!");
+		super("Babby");
+		//babby
+		reset();
 	}
-	System.out.println("Simulated MarioPos before Tick: "+simMarioPos[0]+","+simMarioPos[1]);
-	test.tick();
-	testEnemies = test.getEnemiesFloatPos();
-	System.out.println("Counter: "+testEnemies.length);
-	if(testEnemies.length > 0)
-		System.out.println("First Entry after Tick: "+ testEnemies[0]);
-	
-	
-	System.out.println("Simulated MarioPos after Tick: "+simMarioPos[0]+","+simMarioPos[1]);
-	System.out.println("====");
-    action[Mario.KEY_SPEED] = action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
-    return action;
-}
 
-@Override
-public void reset()
-{
-    for (int i = 0; i < action.length; ++i)
-        action[i] = false;
-    action[Mario.KEY_RIGHT] = true;
-    action[Mario.KEY_SPEED] = true;
-}
+	public boolean[] getAction()
+	{
+		Environment environment = MarioEnvironment.getInstance();
+		byte[][] cloned = environment.getLevelSceneObservationZ(0);
+		float[] enemies = environment.getEnemiesFloatPos();
+		float[] realMarioPos = environment.getMarioFloatPos();
+		
+		LevelScene test = new LevelScene();
+		test.level = new Level(1500, 15);
+		test.resetDefault();
+		test.mario.x = realMarioPos[0];
+		
+		test.mario.xa = (realMarioPos[0] - lastX) *0.89f;
+		
+		if (Math.abs(test.mario.y - realMarioPos[1]) > 0.1f)
+			test.mario.ya = (realMarioPos[1] - lastY) * 0.85f+3f;// + 3f;
+		if(lastY == 0)
+			test.mario.ya = 3f;
+		if(lastX == 0)
+			test.mario.xa = 0f;
+		test.mario.y = realMarioPos[1];
+		System.out.println("xa: " +test.mario.xa);
+		System.out.println("ya: " +test.mario.ya);
+		
+		
+		test.setLevelScene(cloned);
+		test.setEnemies(enemies);
+		lastX = realMarioPos[0];
+		lastY = realMarioPos[1];
+
+		System.out.println("Real World Mario Pos: "+realMarioPos[0]+","+realMarioPos[1]);
+
+		mctsSimulator simulator = new mctsSimulator(test);
+		simulator.simulate(1);
+		//	if(isMarioAbleToJump)
+		//		action[Mario.KEY_JUMP] = true;
+		//	else
+		//		action[Mario.KEY_JUMP] = false;
+		//action[Mario.KEY_SPEED] = action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+		return action;
+	}
+
+	@Override
+	public void reset()
+	{
+		for (int i = 0; i < action.length; ++i)
+			action[i] = false;
+		//action[Mario.KEY_JUMP] = true;
+		//action[Mario.KEY_RIGHT] = true;
+		// action[Mario.KEY_SPEED] = true;
+	}
 }
