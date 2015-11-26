@@ -564,7 +564,6 @@ private void calcPic()
 
 private boolean move(float xa, float ya)
 {
-	System.out.println(xa+","+ya);
     while (xa > 8)
     {
         if (!move(8, 0)) return false;
@@ -589,15 +588,11 @@ private boolean move(float xa, float ya)
     boolean collide = false;
     if (ya > 0)
     {
-    	System.out.println("Width:"+width);
-    	System.out.println((x+xa-width));
-    	System.out.println("X:"+x+" Y:"+y+" Xa:"+xa+" Ya:"+ya);
         if (isBlocking(x + xa - width, y + ya, xa, 0)) collide = true;
         else if (isBlocking(x + xa + width, y + ya, xa, 0)) collide = true;
         else if (isBlocking(x + xa - width, y + ya + 1, xa, ya)) collide = true;
         else if (isBlocking(x + xa + width, y + ya + 1, xa, ya)) collide = true;
     }
-    System.out.println(collide);
     if (ya < 0)
     {
         if (isBlocking(x + xa, y + ya - height, xa, ya)) collide = true;
@@ -627,7 +622,6 @@ private boolean move(float xa, float ya)
 
     if (collide)
     {
-    	System.out.println("COLLIDED");
         if (xa < 0)
         {
             x = (int) ((x - width) / 16) * 16 + width;
@@ -652,7 +646,6 @@ private boolean move(float xa, float ya)
         return false;
     } else
     {
-    	System.out.println("No Collision");
         x += xa;
         y += ya;
         return true;
@@ -664,7 +657,6 @@ private boolean isBlocking(final float _x, final float _y, final float xa, final
     int x = (int) (_x / 16);
     int y = (int) (_y / 16);
     if (x == (int) (this.x / 16) && y == (int) (this.y / 16)) return false;
-    System.out.println("X:"+x+" Y:"+y+" Xa:"+xa+" Ya:"+ya);
     boolean blocking = levelScene.level.isBlocking(x, y, xa, ya);
 
     byte block = levelScene.level.getBlock(x, y);

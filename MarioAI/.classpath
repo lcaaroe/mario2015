@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/Hlynur/Documents/JDM/jdom-1.1.3.jar"/>
-	<classpathentry kind="lib" path="/Users/Hlynur/Documents/JDM/junit-4.11.jar"/>
-	<classpathentry kind="lib" path="/Users/Hlynur/Documents/JDM/testng-6.8.7.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/asm"/>
+	<classpathentry kind="lib" path="JDM/jdom-1.1.3.jar"/>
+	<classpathentry kind="lib" path="JDM/junit-4.11.jar"/>
+	<classpathentry kind="lib" path="JDM/testng-6.8.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

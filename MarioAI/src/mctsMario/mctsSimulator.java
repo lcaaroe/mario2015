@@ -21,7 +21,8 @@ public class mctsSimulator {
 			float[] simMarioPos = levelScene.getMarioFloatPos();			
 			System.out.println("Simulated MarioPos before Tick: "+simMarioPos[0]+","+simMarioPos[1]);
 			
-//			levelScene.mario.keys[Mario.KEY_RIGHT] = true;
+			levelScene.mario.keys[Mario.KEY_RIGHT] = true;
+			//levelScene.mario.keys[Mario.KEY_SPEED] = levelScene.mario.keys[Mario.KEY_JUMP] = levelScene.isMarioAbleToJump() || !levelScene.isMarioOnGround();
 			System.out.println("[" 
     				+ (levelScene.mario.keys[Mario.KEY_DOWN] ? "d" : "") 
     				+ (levelScene.mario.keys[Mario.KEY_RIGHT] ? "r" : "")
