@@ -61,6 +61,7 @@ public final class Play
 
 public static void main(String[] args)
 {
+	System.out.println("TESTETSETSETEST");
     final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
     System.out.println(marioAIOptions.getAgentFullLoadName());
     marioAIOptions.setAgent(new BabbysFirstMarioAgent());

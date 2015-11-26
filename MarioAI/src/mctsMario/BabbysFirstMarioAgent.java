@@ -76,7 +76,15 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		System.out.println("xa: " +test.mario.xa);
 		System.out.println("ya: " +test.mario.ya);
 		
-		
+		for(int y=0; y<cloned.length; y++)
+		{
+			String meow = "";
+			for(int x=0; x<cloned[y].length; x++)
+			{
+				meow += cloned[y][x]+",";
+			}
+			System.out.println(meow);
+		}
 		test.setLevelScene(cloned);
 		test.setEnemies(enemies);
 		lastX = realMarioPos[0];
@@ -85,12 +93,12 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		System.out.println("Real World Mario Pos: "+realMarioPos[0]+","+realMarioPos[1]);
 
 		mctsSimulator simulator = new mctsSimulator(test);
-		simulator.simulate(1);
+		//simulator.simulate(1);
 		//	if(isMarioAbleToJump)
 		//		action[Mario.KEY_JUMP] = true;
 		//	else
 		//		action[Mario.KEY_JUMP] = false;
-		//action[Mario.KEY_SPEED] = action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+		action[Mario.KEY_SPEED] = action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
 		return action;
 	}
 
@@ -100,7 +108,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		for (int i = 0; i < action.length; ++i)
 			action[i] = false;
 		//action[Mario.KEY_JUMP] = true;
-		//action[Mario.KEY_RIGHT] = true;
-		// action[Mario.KEY_SPEED] = true;
+		action[Mario.KEY_RIGHT] = true;
+		 action[Mario.KEY_SPEED] = true;
 	}
 }
