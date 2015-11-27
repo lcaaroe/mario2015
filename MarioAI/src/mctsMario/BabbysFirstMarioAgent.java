@@ -60,12 +60,14 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		byte[][] cloned = environment.getLevelSceneObservationZ(0);
 		float[] enemies = environment.getEnemiesFloatPos();
 		float[] realMarioPos = environment.getMarioFloatPos();
+		environment.getMarioState();
 		
-		action[Mario.KEY_RIGHT] = true;
-		action[Mario.KEY_SPEED] = true;
+		action[Mario.KEY_RIGHT] = false;
+		action[Mario.KEY_SPEED] = false;
 		
 		//Get colliders to work.
 		simulator.advanceStep(action);
+		
 		
 		simulator.levelScene.mario.x = realMarioPos[0];
 		
@@ -78,26 +80,23 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 //		System.out.println("xa: " +simulator.levelScene.mario.xa);
 //		System.out.println("ya: " +simulator.levelScene.mario.ya);
 		
-//		for(int y=0; y<cloned.length; y++)
-//		{
-//			String meow = "";
-//			for(int x=0; x<cloned[y].length; x++)
-//			{
-//				meow += cloned[y][x]+",";
-//			}
-//			System.out.println(meow);
-//		}
+
 		simulator.levelScene.setLevelScene(cloned);
 		simulator.levelScene.setEnemies(enemies);
 		lastX = realMarioPos[0];
 		lastY = realMarioPos[1];
 		
+		
 		//System.out.println("Real World Mario Pos: "+realMarioPos[0]+","+realMarioPos[1]);
 		
-		System.out.println("Simulator: "+simulator.levelScene.mario.mayJump()+","+!simulator.levelScene.mario.isOnGround());
-		System.out.println("Environment: "+isMarioAbleToJump+","+!isMarioOnGround);
+		System.out.println("Environment: Jump: "+isMarioAbleToJump+", Grounded: "+!isMarioOnGround);
+		System.out.println("Simulator: Jump: "+simulator.levelScene.mario.mayJump()+", Grounded: "+!simulator.levelScene.mario.isOnGround());
+		
 		action = simulator.simulate(1);
 		
+		byte[][] testy = simulator.levelScene.level.map;
+		System.out.println(testy.length);
+		System.out.println(cloned.length);
 		
 		
 		//	if(isMarioAbleToJump)

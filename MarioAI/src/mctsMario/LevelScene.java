@@ -359,7 +359,7 @@ public final class LevelScene implements SpriteContext, Cloneable
 	{
 		for (int y = 0; y < data.length; y++) {
 			for (int x = 0; x < data[y].length; x++) {
-				level.setBlock(x, y, (byte) 4);
+				level.setBlock(x, y, data[x][y]);
 			}
 		}
 		//    int HalfObsWidth = 11;
