@@ -294,12 +294,12 @@ public final class LevelScene implements SpriteContext, Cloneable
 					}
 				}
 			}
-		for (Sprite sprite : sprites)
-			System.out.println("Sprite X Pos Before Tick: "+sprite.x);
+//		for (Sprite sprite : sprites)
+//			System.out.println("Sprite X Pos Before Tick: "+sprite.x);
 		for (Sprite sprite : sprites)
 			sprite.tick();
-		for (Sprite sprite : sprites)
-			System.out.println("Sprite X Pos After Tick: "+sprite.x);
+//		for (Sprite sprite : sprites)
+//			System.out.println("Sprite X Pos After Tick: "+sprite.x);
 
 		byte levelElement = level.getBlock(mario.mapX, mario.mapY);
 		if (levelElement == (byte) (13 + 3 * 16) || levelElement == (byte) (13 + 5 * 16))
@@ -357,11 +357,32 @@ public final class LevelScene implements SpriteContext, Cloneable
 	// includes some gap detection code
 	public void setLevelScene(byte[][] data)
 	{
-		for (int y = 0; y < data.length; y++) {
-			for (int x = 0; x < data[y].length; x++) {
-				level.setBlock(x, y, (byte) 4);
+	    int HalfObsWidth = data.length/2;
+    	int HalfObsHeight = data[data.length-1].length/2;
+    	//System.out.println(HalfObsWidth+","+HalfObsHeight);
+		int MarioXInMap = (int)mario.x/16;
+		int MarioYInMap = (int)mario.y/16;
+		for (int x = 0; x < data.length; x++) {
+			for (int y = 0; y < data[x].length; y++) {
+				int tempx = y-HalfObsWidth;
+				int tempy = x-HalfObsHeight;
+				int correctedX = tempx+MarioXInMap;
+				int correctedY = tempy+MarioYInMap;
+				
+				if(data[x][y] != 0)
+				{
+//					System.out.println("X: "+ y+", Y:"+x);
+//					System.out.println("Corrected X: "+correctedX+", Corrected Y: "+correctedY);
+				}
+				if(correctedX >= 0 && correctedY >=0 && correctedX < level.length && correctedY < level.height)
+				{
+					level.setBlock(correctedX, correctedY, data[x][y]);
+//					System.out.println(level.map[correctedX][correctedY]);
+				}
+				
 			}
 		}
+		System.out.println(MarioXInMap+","+MarioYInMap);
 		//    int HalfObsWidth = 11;
 		//    int HalfObsHeight = 11;
 		//    int MarioXInMap = (int)mario.x/16;
@@ -857,6 +878,7 @@ public final class LevelScene implements SpriteContext, Cloneable
 			if (sprite.kind == Sprite.KIND_FIREBALL)
 				newSprites.add(sprite);
         }
+		newSprites.add(mario);
 		sprites = newSprites;
 	}
 }

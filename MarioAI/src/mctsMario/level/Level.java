@@ -148,7 +148,7 @@ public Level(int length, int height)
     this.length = length;
     this.height = height;
 
-    xExit = 50;
+    xExit = 100000;
     yExit = 10;
 //        System.out.println("Java: Level: lots of news here...");
 //        System.out.println("length = " + length);
@@ -265,11 +265,16 @@ public byte getBlockData(int x, int y)
 public boolean isBlocking(int x, int y, float xa, float ya)
 {
     byte block = getBlock(x, y);
-    boolean blocking = ((TILE_BEHAVIORS[block & 0xff]) & BIT_BLOCK_ALL) > 0;
-    blocking |= (ya > 0) && ((TILE_BEHAVIORS[block & 0xff]) & BIT_BLOCK_UPPER) > 0;
-    blocking |= (ya < 0) && ((TILE_BEHAVIORS[block & 0xff]) & BIT_BLOCK_LOWER) > 0;
-
-    return blocking;
+    if(block < 0)
+    	return true;
+    else 
+    	return false;
+//    boolean blocking = ((TILE_BEHAVIORS[block & 0xff]) & BIT_BLOCK_ALL) > 0;
+//    blocking |= (ya > 0) && ((TILE_BEHAVIORS[block & 0xff]) & BIT_BLOCK_UPPER) > 0;
+//    blocking |= (ya < 0) && ((TILE_BEHAVIORS[block & 0xff]) & BIT_BLOCK_LOWER) > 0;
+//    if(block == -60)
+//    	System.out.println("Simulation Tile: "+TILE_BEHAVIORS[-127 & 0xff]);
+//    return blocking;
 }
 
 public SpriteTemplate getSpriteTemplate(int x, int y)
