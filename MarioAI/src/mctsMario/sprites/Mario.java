@@ -296,7 +296,6 @@ public final class Mario extends Sprite implements Cloneable
 
 		if (mapY > -1 && isTrace)
 			++levelScene.level.marioTrace[this.mapX][this.mapY];
-
 		if (winTime > 0)
 		{
 			winTime++;
@@ -305,7 +304,6 @@ public final class Mario extends Sprite implements Cloneable
 			ya = 0;
 			return;
 		}
-
 		if (deathTime > 0)
 		{
 			deathTime++;
@@ -452,9 +450,10 @@ public final class Mario extends Sprite implements Cloneable
 		//onGround = false;
 		move(xa, 0);
 		move(0, ya);
-
 		if (y > levelScene.level.height * LevelScene.cellSize + LevelScene.cellSize)
+		{
 			die("Gap");
+		}
 
 		if (x < 0)
 		{
@@ -584,16 +583,16 @@ public final class Mario extends Sprite implements Cloneable
 			if (!move(0, -8)) return false;
 			ya += 8;
 		}
-
 		boolean collide = false;
 		if (ya > 0)
 		{
+			
 			if (isBlocking(x + xa - width, y + ya, xa, 0)) collide = true;
 			else if (isBlocking(x + xa + width, y + ya, xa, 0)) collide = true;
 			else if (isBlocking(x + xa - width, y + ya + 1, xa, ya)) collide = true;
 			else if (isBlocking(x + xa + width, y + ya + 1, xa, ya)) collide = true;
 		}
-		if (ya < 0)
+		if (ya <= 0)
 		{
 			if (isBlocking(x + xa, y + ya - height, xa, ya)) collide = true;
 			else if (collide || isBlocking(x + xa - width, y + ya - height, xa, ya)) collide = true;
@@ -619,7 +618,7 @@ public final class Mario extends Sprite implements Cloneable
 			if (isBlocking(x + xa - width, y + ya, xa, ya)) collide = true;
 			else sliding = false;
 		}
-
+		//System.out.println("Collide: "+ collide);
 		if (collide)
 		{
 
@@ -659,9 +658,7 @@ public final class Mario extends Sprite implements Cloneable
 		int y = (int) (_y / 16);
 		if (x == (int) (this.x / 16) && y == (int) (this.y / 16)) return false;
 		boolean blocking = levelScene.level.isBlocking(x, y, xa, ya);
-
 		byte block = levelScene.level.getBlock(x, y);
-
 		if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_PICKUPABLE) > 0)
 		{
 			Mario.gainCoin();

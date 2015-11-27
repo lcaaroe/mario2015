@@ -239,7 +239,6 @@ public byte[][] getLevelSceneObservationZ(int ZLevel)
             {
                 mergedZZ[row][col] = levelSceneZ[row][col] = 0;
             }
-
         }
     }
     return levelSceneZ;

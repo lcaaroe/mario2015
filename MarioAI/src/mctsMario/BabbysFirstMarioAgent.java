@@ -57,13 +57,12 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 	public boolean[] getAction()
 	{
 		Environment environment = MarioEnvironment.getInstance();
-		byte[][] cloned = environment.getLevelSceneObservationZ(0);
+		byte[][] cloned = environment.getLevelSceneObservationZ(1);
 		float[] enemies = environment.getEnemiesFloatPos();
 		float[] realMarioPos = environment.getMarioFloatPos();
-		environment.getMarioState();
 		
-		action[Mario.KEY_RIGHT] = false;
-		action[Mario.KEY_SPEED] = false;
+		action[Mario.KEY_RIGHT] = true;
+		action[Mario.KEY_SPEED] = true;
 		
 		//Get colliders to work.
 		simulator.advanceStep(action);
@@ -77,8 +76,8 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 			simulator.levelScene.mario.ya = (realMarioPos[1] - lastY) * 0.85f;// + 3f;
 
 		simulator.levelScene.mario.y = realMarioPos[1];
-//		System.out.println("xa: " +simulator.levelScene.mario.xa);
-//		System.out.println("ya: " +simulator.levelScene.mario.ya);
+		System.out.println("xa: " +simulator.levelScene.mario.xa);
+		System.out.println("ya: " +simulator.levelScene.mario.ya);
 		
 
 		simulator.levelScene.setLevelScene(cloned);
@@ -94,9 +93,15 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		
 		action = simulator.simulate(1);
 		
-		byte[][] testy = simulator.levelScene.level.map;
-		System.out.println(testy.length);
-		System.out.println(cloned.length);
+//		for(int y=0; y<cloned.length; y++)
+//		{
+//			String meow = "";
+//			for(int x=0; x<cloned[y].length; x++)
+//			{
+//				meow += cloned[y][x]+",";
+//			}
+//			System.out.println(meow);
+//		}
 		
 		
 		//	if(isMarioAbleToJump)
@@ -105,6 +110,10 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		//		action[Mario.KEY_JUMP] = false;
 		//action[Mario.KEY_SPEED] = action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
 
+//		for (int i = 0; i < action.length; i++) {
+//			
+//			action[i] = false;
+//		}
 		
 		System.out.println("Action: [" 
 				+ (action[Mario.KEY_DOWN] ? "d" : "") 

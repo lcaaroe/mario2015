@@ -357,11 +357,32 @@ public final class LevelScene implements SpriteContext, Cloneable
 	// includes some gap detection code
 	public void setLevelScene(byte[][] data)
 	{
-		for (int y = 0; y < data.length; y++) {
-			for (int x = 0; x < data[y].length; x++) {
-				level.setBlock(x, y, data[x][y]);
+	    int HalfObsWidth = data.length/2;
+    	int HalfObsHeight = data[data.length-1].length/2;
+    	//System.out.println(HalfObsWidth+","+HalfObsHeight);
+		int MarioXInMap = (int)mario.x/16;
+		int MarioYInMap = (int)mario.y/16;
+		for (int x = 0; x < data.length; x++) {
+			for (int y = 0; y < data[x].length; y++) {
+				int tempx = y-HalfObsWidth;
+				int tempy = x-HalfObsHeight;
+				int correctedX = tempx+MarioXInMap;
+				int correctedY = tempy+MarioYInMap;
+				
+				if(data[x][y] != 0)
+				{
+//					System.out.println("X: "+ y+", Y:"+x);
+//					System.out.println("Corrected X: "+correctedX+", Corrected Y: "+correctedY);
+				}
+				if(correctedX >= 0 && correctedY >=0 && correctedX < level.length && correctedY < level.height)
+				{
+					level.setBlock(correctedX, correctedY, data[x][y]);
+//					System.out.println(level.map[correctedX][correctedY]);
+				}
+				
 			}
 		}
+		System.out.println(MarioXInMap+","+MarioYInMap);
 		//    int HalfObsWidth = 11;
 		//    int HalfObsHeight = 11;
 		//    int MarioXInMap = (int)mario.x/16;

@@ -31,15 +31,13 @@ public class mctsSimulator {
 			float[] simEnemies = levelScene.getEnemiesFloatPos();
 			
 			float[] simMarioPos = levelScene.getMarioFloatPos();			
-			//System.out.println("Simulated MarioPos before Tick: "+simMarioPos[0]+","+simMarioPos[1]);
+			//System.out.println("Simulated MarioPos before Tick: "+(int)simMarioPos[0]/16+","+(int)simMarioPos[1]/16);
 			
 			for (int x = 0; x < action.length; ++x)
 				action[x] = false;
 			action[Mario.KEY_RIGHT] = true;
 			//System.out.println(levelScene.isMarioAbleToJump()+","+!levelScene.isMarioOnGround());
 			action[Mario.KEY_SPEED] = action[Mario.KEY_JUMP] = levelScene.isMarioAbleToJump() || !levelScene.isMarioOnGround();
-			if(levelScene.isMarioAbleToJump())
-				System.out.println("JUMP AROUND");
 			advanceStep(action);
 			
 			simEnemies = levelScene.getEnemiesFloatPos();
@@ -48,7 +46,9 @@ public class mctsSimulator {
 //				System.out.println("First Entry after Tick: "+ simEnemies[0]);
 			
 			simMarioPos = levelScene.getMarioFloatPos();
-			//System.out.println("Simulated MarioPos after Tick: "+simMarioPos[0]+","+simMarioPos[1]);
+			//System.out.println("Simulated MarioPos after Tick: "+(int)simMarioPos[0]/16+","+(int)simMarioPos[1]/16);
+//			if((int)simMarioPos[1]/16 < levelScene.level.height)
+//				System.out.println(levelScene.level.map[(int)simMarioPos[0]/16][(int)simMarioPos[1]/16]);
 			System.out.println("----------------------");
 		}
 		System.out.println("=======================");

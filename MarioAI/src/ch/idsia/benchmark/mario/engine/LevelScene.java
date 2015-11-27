@@ -174,6 +174,7 @@ public void checkFireballCollide(Fireball fireball)
 
 public void tick()
 {
+//	System.out.println("--------------");
     if (GlobalOptions.isGameplayStopped)
         return;
 
