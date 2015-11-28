@@ -7,16 +7,16 @@ public class Node
 	public ArrayList<Node> children;
 	public Node parent;
 	
-	public LevelScene state;
+	public LevelScene levelScene;
 	public boolean[] parentAction;
 	
 	public int timesVisited = 0;
 	public int reward = 0;
 	
 	
-	public Node(LevelScene state, Node parent)
+	public Node(LevelScene levelScene, Node parent)
 	{
-		this.state = state;
+		this.levelScene = levelScene;
 		this.parent = parent;
 	}
 	

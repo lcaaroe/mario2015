@@ -1,8 +1,9 @@
 package mctsMario;
 
+import java.util.ArrayList;
 import java.util.Random;
 
-public class mcts 
+public class MCTS 
 {
 	// Max allowed time (in ms) to run the search. Algorithm needs a little time to select best child and exit.
 	private int timeLimit = 19;
@@ -29,6 +30,8 @@ public class mcts
 	public boolean[] search(LevelScene levelScene)
 	{
 		Node rootNode = new Node(levelScene, null);
+		
+//		synchronizeSimulation(rootNode);
 		
 		while (System.currentTimeMillis() < System.currentTimeMillis() + timeLimit)
 		{
@@ -82,32 +85,79 @@ public class mcts
 	private Node expand(Node v)
 	{
 		// Get untried action (assumed that Node v is not fully expanded)
-		boolean[] action = getUntriedAction(v);
+		boolean[] untriedAction = getUntriedAction(v);
+		
+		// Clone Node v's levelScene.
+		LevelScene levelSceneClone = null;
+		try{
+			levelSceneClone = (LevelScene) v.levelScene.Clone();
+		}catch (CloneNotSupportedException e){
+			e.printStackTrace();
+		}
+		
+		// TODO: Advance the levelScene 1 tick.
+		//levelSceneCopy.simulate(untriedAction);
 		
 		// Create new child representing the world state after performing the untried action.
-		// TODO: Advance a levelscene clone performing untried action
+		Node child = new Node(levelSceneClone, v);
+		child.parentAction = untriedAction;
+		v.children.add(child);
 		
-		// TODO: Create child node with parentAction = action and state = levelscene clone
+		return child;
+	}
+	
+	
+	/**
+	 * Gets an untried action from Node v.
+	 * @param v
+	 * @return An untried action from Node v. Returns 'do-nothing' action if no untried actions exist.
+	 */
+	private boolean[] getUntriedAction(Node v)
+	{
+		ArrayList<boolean[]> possibleActions = getPossibleActions(v);
 		
-		// TODO: Return child
-		return v;
+		outer:
+		for (boolean[] possibleAction : possibleActions) 
+		{
+			for (Node child : v.children) 
+			{
+				if (child.parentAction == possibleAction)
+				{
+					// A child representing this action already exist, so continue to next move.
+					continue outer;
+				}
+				else
+				{
+					// The move is untried.
+					return possibleAction;
+				}
+			}
+		}
+		
+		// If no untried actions exist, return a 'do-nothing' action. (Or null action?)
+		boolean[] action = new boolean[6];
+		for (int i = 0; i < action.length; i++) {
+			action[i] = false;
+		}
+		return action;
 	}
 	
 	
 	/**
 	 * TODO
-	 * Gets an untried action from Node v.
 	 * @param v
-	 * @return An untried action from Node v.
+	 * @return A list of all possible moves from current world state represented by Node v.
 	 */
-	private boolean[] getUntriedAction(Node v)
+	private ArrayList<boolean[]> getPossibleActions(Node v)
 	{
+		ArrayList<boolean[]> possibleActions = new ArrayList<boolean[]>();
 		
-		boolean[] action = new boolean[6];
-		return action;
+		return possibleActions;
 	}
 	
+	
 	/**
+	 * TODO
 	 * Checks whether the node represents a state terminal game state (e.g. Mario dead or won).
 	 * @param v
 	 * @return
@@ -128,8 +178,25 @@ public class mcts
 	 */
 	private float defaultPolicy(Node v, int maxTicks)
 	{
-		// TODO: Clone levelscene
+		// Clone Node v's levelScene.
+		LevelScene levelSceneClone = null;
+		try{
+			levelSceneClone = (LevelScene) v.levelScene.Clone();
+		}catch (CloneNotSupportedException e){
+			e.printStackTrace();
+		}
+		
+		// Get random possible action.
+		ArrayList<boolean[]> possibleActions = getPossibleActions(v);
+		boolean[] randomAction = possibleActions.get(rng.nextInt(possibleActions.size()));
+		
+		
 		// TODO: Advance levelScene using random possible actions until maxTicks budget is reached.
+		for (int i = 0; i < maxTicks; i++) 
+		{
+			// simulate(action)
+		}
+		
 		// TODO: Calculate the reward when playout is finished (e.g. based on how far mario got)
 		return 0;
 	}
@@ -207,6 +274,15 @@ public class mcts
 		
 		
 		return valueTerm + c * explorationTerm + (rng.nextFloat() * tieBreaker);
+	}
+	
+	/**
+	 * Synchronizes the inner simulation (inspired by Robin Baumgarten)
+	 * @param v
+	 */
+	private void synchronizeSimulation(Node v)
+	{
+		
 	}
 	
 	
