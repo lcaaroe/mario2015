@@ -59,7 +59,7 @@ public class MCTS
 		while (!isTerminalState(v))
 		{
 			// if v is not fully expanded, find and add new child.
-			if (!v.isFullyExpanded())
+			if (!isNodeFullyExpanded(v))
 			{
 				// Add new child to v and return it.
 				return expand(v);
@@ -104,6 +104,26 @@ public class MCTS
 		v.children.add(child);
 		
 		return child;
+	}
+	
+	
+	/**
+	 * TODO: Find a better solution. getUntriedAction is called right after in expand as well...
+	 * @param v
+	 * @return Whether or not every possible action has been added as a child to this node.
+	 */
+	private boolean isNodeFullyExpanded(Node v)
+	{
+		boolean[] a = getUntriedAction(v);
+		
+		// If the untried action returned is a 'do-nothing' action (all buttons false), then no untried actions exist.
+		for (int i = 0; i < a.length; i++) {
+			if (a[i] == true)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	

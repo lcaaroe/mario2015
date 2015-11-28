@@ -19,14 +19,4 @@ public class Node
 		this.levelScene = levelScene;
 		this.parent = parent;
 	}
-	
-	/**
-	 * 
-	 * @return Whether or not every possible action has been added as a child to this node.
-	 */
-	public boolean isFullyExpanded()
-	{
-		//TODO
-		return true;
-	}
 }
