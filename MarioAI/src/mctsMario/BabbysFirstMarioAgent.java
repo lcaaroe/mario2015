@@ -47,6 +47,14 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 {
 	private float lastX = 0;
 	private float lastY = 0;
+	
+	// -- LCA TEST
+//	private int i = 0;
+//	private float marioFirstX = 0;
+	// -- LCA TEST END
+	
+	MCTS mcts;
+	
 //	private mctsSimulator simulator;
 	
 	public BabbysFirstMarioAgent()
@@ -54,6 +62,8 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		super("Babby");
 		//babby
 		reset();
+		
+		mcts = new MCTS();
 	}
 
 	public boolean[] getAction()
@@ -80,13 +90,55 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		lastX = realMarioPos[0];
 		lastY = realMarioPos[1];
 		
-		System.out.println("Action: [" 
-				+ (action[Mario.KEY_DOWN] ? "d" : "") 
-				+ (action[Mario.KEY_RIGHT] ? "r" : "")
-				+ (action[Mario.KEY_LEFT] ? "l" : "")
-				+ (action[Mario.KEY_JUMP] ? "j" : "")
-				+ (action[Mario.KEY_SPEED] ? "s" : "") + "]");
-		return action;
+//		if (Util.ornDebug) System.out.println("Action: [" 
+//		+ (action[Mario.KEY_DOWN] ? "d" : "") 
+//		+ (action[Mario.KEY_RIGHT] ? "r" : "")
+//		+ (action[Mario.KEY_LEFT] ? "l" : "")
+//		+ (action[Mario.KEY_JUMP] ? "j" : "")
+//		+ (action[Mario.KEY_SPEED] ? "s" : "") + "]");
+		
+		
+		// -- Lasses test agent shit BEGIN --
+//		if (environment.getMarioStatus() == Mario.STATUS_DEAD || environment.getMarioStatus() == Mario.STATUS_WIN)
+//		{
+//			System.out.println("LOLOLOLO");
+//			System.out.println("isLevelFinished = " + environment.isLevelFinished());
+//		}
+//
+//		
+////		if (Util.lcaDebug) System.out.println("i = " + i + " | i%10 = " + i%10);
+//		
+//		// Introducing ... shitty jumping agent! Jumps every 20 frames for 3 frames in a row.
+//		if ((i % 20 == 0) || (i % 20 == 1) || (i % 20 == 2))
+//		{
+////			if (Util.lcaDebug) System.out.println("Jumping allowed");
+//			action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+//		}
+//		else
+//		{
+//			action[Mario.KEY_JUMP] = false;
+//		}
+//		i++;
+//		action[Mario.KEY_RIGHT] = true;
+//		
+//		// Measure how far Mario got -FOR TESTING PURPOSES-
+//		if (i % 2 == 0)
+//		{
+//			marioFirstX = realMarioPos[0];
+//		}
+//		// After one frame, see how far mario got
+//		if (i % 2 == 1)
+//		{
+//			System.out.println("FirstX = " + marioFirstX + ", currentX = " + realMarioPos[0] + ". Mario covered: " + (realMarioPos[0] - marioFirstX)+  " units.");
+//		}
+		// -- Lasses test agent shit END --
+		
+		
+		boolean[] newAction = mcts.search(clonedLevel);
+//		action = mcts.search(clonedLevel);
+		
+		System.out.println("Action length = " + newAction.length);
+		return newAction;
 	}
 
 	@Override
@@ -94,5 +146,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 	{
 		for (int i = 0; i < action.length; ++i)
 			action[i] = false;
+//		action[Mario.KEY_RIGHT] = true;
+//	    action[Mario.KEY_SPEED] = true;
 	}
 }

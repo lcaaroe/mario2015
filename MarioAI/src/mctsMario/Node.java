@@ -6,16 +6,16 @@ import mctsMario.sprites.Mario;
 
 public class Node 
 {
-	public ArrayList<Node> children;
+	public ArrayList<Node> children = new ArrayList<Node>();
 	public Node parent;
 	
 	public LevelScene levelScene;
 	public boolean[] parentAction;
 	
 	public int timesVisited = 0;
-	public int reward = 0;
+	public float reward = 0;
 	
-	public ArrayList<boolean[]> actions;
+	public ArrayList<boolean[]> actions = new ArrayList<boolean[]>();
 	
 	
 	public Node(LevelScene levelScene, Node parent)
@@ -69,5 +69,20 @@ public class Node
     	action[Mario.KEY_SPEED] = run;
     	
     	return action;
+	}
+	
+	/**
+	 * @return String of the combination of buttons represented by parent action.
+	 */
+	public String parentActionAsString()
+	{
+		String s= "[" 
+				+ (parentAction[Mario.KEY_DOWN] ? "d" : "") 
+				+ (parentAction[Mario.KEY_RIGHT] ? "r" : "")
+				+ (parentAction[Mario.KEY_LEFT] ? "l" : "")
+				+ (parentAction[Mario.KEY_JUMP] ? "j" : "")
+				+ (parentAction[Mario.KEY_SPEED] ? "s" : "") + "]";
+		
+		return s;
 	}
 }
