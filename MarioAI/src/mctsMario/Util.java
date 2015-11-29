@@ -2,10 +2,8 @@ package mctsMario;
 
 public class Util 
 {
-	public static boolean debugPrint = true;
+	public static boolean lcaDebug = true;
 	
-	public static void print(String s)
-	{
-		System.out.println(s);
-	}
+	// For spam control
+	public static boolean ornDebug = true;
 }
