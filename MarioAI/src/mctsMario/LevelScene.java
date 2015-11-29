@@ -132,14 +132,36 @@ public final class LevelScene implements SpriteContext, Cloneable
 		}
 	}
 
-	protected Object Clone() throws CloneNotSupportedException
-	{
-		LevelScene cloned = (LevelScene) super.clone();
-		cloned.mario = (Mario) this.mario.clone();
-		cloned.level = (Level) this.level.clone();
-		return bonusPoints;
-
-	}
+	public static List<Sprite> cloneList(List<Sprite> list) throws CloneNotSupportedException {
+        List<Sprite> clone = new ArrayList<Sprite>(list.size());
+        for(Sprite item: list) clone.add((Sprite) item.clone());
+        return clone;
+    }
+    
+    @Override protected Object clone() throws CloneNotSupportedException 
+    {
+    	LevelScene c = (LevelScene) super.clone();
+    	c.mario = (Mario) this.mario.clone();
+    	c.level = (Level) this.level.clone();
+    	
+    	List<Sprite> clone = new ArrayList<Sprite>(this.sprites.size());
+        for(Sprite item: this.sprites) 
+        {
+        	if (item == mario)
+        	{
+        		clone.add(c.mario);
+        	}
+        	else
+        	{
+        		Sprite s = (Sprite) item.clone();
+        		if (s.kind == Sprite.KIND_SHELL && ((Shell) s).carried && c.mario.carried != null)
+        			c.mario.carried = s;
+        		clone.add(s);
+        	}
+        }
+        c.sprites = clone;
+    	return c;
+    }
 
 
 	// TODO: !H!: Move to MarioEnvironment !!
@@ -880,6 +902,18 @@ public final class LevelScene implements SpriteContext, Cloneable
         }
 		newSprites.add(mario);
 		sprites = newSprites;
+	}
+	
+	public void advanceStep(boolean[] action)
+	{
+		this.mario.setKeys(action); 
+		System.out.println("[" 
+				+ (action[Mario.KEY_DOWN] ? "d" : "") 
+				+ (action[Mario.KEY_RIGHT] ? "r" : "")
+				+ (action[Mario.KEY_LEFT] ? "l" : "")
+				+ (action[Mario.KEY_JUMP] ? "j" : "")
+				+ (action[Mario.KEY_SPEED] ? "s" : "") + "]");
+		this.tick();
 	}
 }
 

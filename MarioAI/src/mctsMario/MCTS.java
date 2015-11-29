@@ -3,6 +3,8 @@ package mctsMario;
 import java.util.ArrayList;
 import java.util.Random;
 
+import mctsMario.sprites.Mario;
+
 public class MCTS 
 {
 	// Max allowed time (in ms) to run the search. Algorithm needs a little time to select best child and exit.
@@ -90,7 +92,7 @@ public class MCTS
 		// Clone Node v's levelScene.
 		LevelScene levelSceneClone = null;
 		try{
-			levelSceneClone = (LevelScene) v.levelScene.Clone();
+			levelSceneClone = (LevelScene) v.levelScene.clone();
 		}catch (CloneNotSupportedException e){
 			e.printStackTrace();
 		}
@@ -134,7 +136,7 @@ public class MCTS
 	 */
 	private boolean[] getUntriedAction(Node v)
 	{
-		ArrayList<boolean[]> possibleActions = getPossibleActions(v);
+		ArrayList<boolean[]> possibleActions = getPossibleActions();
 		
 		outer:
 		for (boolean[] possibleAction : possibleActions) 
@@ -162,18 +164,49 @@ public class MCTS
 		return action;
 	}
 	
-	
 	/**
 	 * TODO
 	 * @param v
 	 * @return A list of all possible moves from current world state represented by Node v.
 	 */
-	private ArrayList<boolean[]> getPossibleActions(Node v)
+	private ArrayList<boolean[]> getPossibleActions()
 	{
 		ArrayList<boolean[]> possibleActions = new ArrayList<boolean[]>();
 		
+			// jump
+		possibleActions.add(createAction(false, false, false, true, false));
+		possibleActions.add(createAction(false, false, false, true, true));
+		
+		// run right
+		possibleActions.add(createAction(false, true, false, false, true));
+		possibleActions.add(createAction(false, true, false, true, true));
+		possibleActions.add(createAction(false, true, false, false, false));
+		possibleActions.add(createAction(false, true, false, true, false));
+		
+		// run left
+		possibleActions.add(createAction(true, false, false, false, false));
+		possibleActions.add(createAction(true, false, false, true, false));
+		possibleActions.add(createAction(true, false, false, false, true));
+		possibleActions.add(createAction(true, false, false, true, true));
+		
 		return possibleActions;
 	}
+	
+	/**
+	 * TODO
+	 * @param v
+	 * @return Creates the the required action with the input.
+	 */
+	private boolean[] createAction(boolean left, boolean right, boolean down, boolean jump, boolean speed)
+    {
+    	boolean[] action = new boolean[5];
+    	action[Mario.KEY_DOWN] = down;
+    	action[Mario.KEY_JUMP] = jump;
+    	action[Mario.KEY_LEFT] = left;
+    	action[Mario.KEY_RIGHT] = right;
+    	action[Mario.KEY_SPEED] = speed;
+    	return action;
+    }
 	
 	
 	/**
@@ -201,13 +234,13 @@ public class MCTS
 		// Clone Node v's levelScene.
 		LevelScene levelSceneClone = null;
 		try{
-			levelSceneClone = (LevelScene) v.levelScene.Clone();
+			levelSceneClone = (LevelScene) v.levelScene.clone();
 		}catch (CloneNotSupportedException e){
 			e.printStackTrace();
 		}
 		
 		// Get random possible action.
-		ArrayList<boolean[]> possibleActions = getPossibleActions(v);
+		ArrayList<boolean[]> possibleActions = getPossibleActions();
 		boolean[] randomAction = possibleActions.get(rng.nextInt(possibleActions.size()));
 		
 		

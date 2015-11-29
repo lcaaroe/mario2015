@@ -34,7 +34,7 @@ import ch.idsia.benchmark.mario.engine.GlobalOptions;
 import ch.idsia.benchmark.mario.engine.MarioVisualComponent;
 import mctsMario.level.SpriteTemplate;
 
-public class Sprite
+public class Sprite implements Cloneable
 {
 public static final int KIND_NONE = 0;
 public static final int KIND_MARIO = -31;
@@ -160,6 +160,15 @@ public void move()
 {
     x += xa;
     y += ya;
+}
+
+@Override
+public Object clone() throws CloneNotSupportedException
+{
+	Sprite s = (Sprite) super.clone();
+	if (spriteTemplate != null)
+		s.spriteTemplate = (SpriteTemplate) this.spriteTemplate.clone();
+	return s;
 }
 
 public void render(final Graphics og)

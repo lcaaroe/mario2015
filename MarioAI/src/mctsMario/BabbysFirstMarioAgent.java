@@ -27,6 +27,8 @@
 
 package mctsMario;
 
+import java.util.ArrayList;
+
 import ch.idsia.agents.Agent;
 import ch.idsia.agents.controllers.BasicMarioAIAgent;
 import ch.idsia.benchmark.mario.environments.Environment;
@@ -45,7 +47,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 {
 	private float lastX = 0;
 	private float lastY = 0;
-	private mctsSimulator simulator;
+//	private mctsSimulator simulator;
 	
 	public BabbysFirstMarioAgent()
 	{
@@ -61,37 +63,56 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		float[] enemies = environment.getEnemiesFloatPos();
 		float[] realMarioPos = environment.getMarioFloatPos();
 		
-		action[Mario.KEY_RIGHT] = true;
-		action[Mario.KEY_SPEED] = true;
+		LevelScene clonedLevel  = new LevelScene();
+		clonedLevel.level = new Level(1500,15);
+		clonedLevel.resetDefault();
 		
-		//Get colliders to work.
-		simulator.advanceStep(action);
+		clonedLevel.mario.x = realMarioPos[0];		
+		clonedLevel.mario.xa = (realMarioPos[0] - lastX) *0.89f;		
+		if (Math.abs(clonedLevel.mario.y - realMarioPos[1]) > 0.1f)
+			clonedLevel.mario.ya = (realMarioPos[1] - lastY) * 0.85f;// + 3f;
+		clonedLevel.mario.y = realMarioPos[1];
+		
+		LevelScene levelTest = null;
+		try
+		{
+			levelTest = (LevelScene) clonedLevel.clone();
+		} catch (CloneNotSupportedException e)
+		{
+			e.printStackTrace();
+		}
 		
 		
-		simulator.levelScene.mario.x = realMarioPos[0];
+//		//Get colliders to work.
+//		simulator.advanceStep(action);		
 		
-		simulator.levelScene.mario.xa = (realMarioPos[0] - lastX) *0.89f;
+//		simulator.levelScene.mario.x = realMarioPos[0];		
+//		simulator.levelScene.mario.xa = (realMarioPos[0] - lastX) *0.89f;		
+//		if (Math.abs(simulator.levelScene.mario.y - realMarioPos[1]) > 0.1f)
+//			simulator.levelScene.mario.ya = (realMarioPos[1] - lastY) * 0.85f;// + 3f;
+//		simulator.levelScene.mario.y = realMarioPos[1];
 		
-		if (Math.abs(simulator.levelScene.mario.y - realMarioPos[1]) > 0.1f)
-			simulator.levelScene.mario.ya = (realMarioPos[1] - lastY) * 0.85f;// + 3f;
+		System.out.println("xa: " +clonedLevel.mario.xa);
+		System.out.println("ya: " +clonedLevel.mario.ya);
+		
 
-		simulator.levelScene.mario.y = realMarioPos[1];
-		System.out.println("xa: " +simulator.levelScene.mario.xa);
-		System.out.println("ya: " +simulator.levelScene.mario.ya);
-		
-
-		simulator.levelScene.setLevelScene(cloned);
-		simulator.levelScene.setEnemies(enemies);
+		clonedLevel.setLevelScene(cloned);
+		clonedLevel.setEnemies(enemies);
 		lastX = realMarioPos[0];
 		lastY = realMarioPos[1];
 		
+		action[Mario.KEY_RIGHT] = true;
+		action[Mario.KEY_SPEED] = true;
+		action[Mario.KEY_SPEED] = action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
 		
-		//System.out.println("Real World Mario Pos: "+realMarioPos[0]+","+realMarioPos[1]);
+		System.out.println("Before: "+levelTest.mario.x+","+levelTest.mario.y);
+		System.out.println("before: "+levelTest.isMarioOnGround());
+		levelTest.advanceStep(action);
+		System.out.println("After: "+levelTest.mario.x+","+levelTest.mario.y);
+		System.out.println("testeru: "+levelTest.isMarioOnGround());
 		
-		System.out.println("Environment: Jump: "+isMarioAbleToJump+", Grounded: "+!isMarioOnGround);
-		System.out.println("Simulator: Jump: "+simulator.levelScene.mario.mayJump()+", Grounded: "+!simulator.levelScene.mario.isOnGround());
-		
-		action = simulator.simulate(1);
+//		System.out.println("Environment: Jump: "+isMarioAbleToJump+", Grounded: "+!isMarioOnGround);
+//		System.out.println("Simulator: Jump: "+clonedLevel.mario.mayJump()+", Grounded: "+!clonedLevel.mario.isOnGround());
 		
 //		for(int y=0; y<cloned.length; y++)
 //		{
@@ -115,6 +136,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 //			action[i] = false;
 //		}
 		
+		
 		System.out.println("Action: [" 
 				+ (action[Mario.KEY_DOWN] ? "d" : "") 
 				+ (action[Mario.KEY_RIGHT] ? "r" : "")
@@ -127,7 +149,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 	@Override
 	public void reset()
 	{
-		simulator = new mctsSimulator();
+//		simulator = new mctsSimulator();
 		for (int i = 0; i < action.length; ++i)
 			action[i] = false;
 		//action[Mario.KEY_JUMP] = true;

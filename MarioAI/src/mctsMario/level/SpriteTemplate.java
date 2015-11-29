@@ -33,7 +33,7 @@ import java.io.Serializable;
 import mctsMario.LevelScene;
 import mctsMario.sprites.*;
 
-public class SpriteTemplate implements Serializable
+public class SpriteTemplate implements Serializable, Cloneable
 {
 public int lastVisibleTick = -1;
 public Sprite sprite;
@@ -48,6 +48,13 @@ public int getType()
 }
 
 private int type;
+
+@Override
+public Object clone() throws CloneNotSupportedException
+{
+	return super.clone();
+	
+}
 
 public SpriteTemplate(int type)
 {
