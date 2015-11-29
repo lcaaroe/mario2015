@@ -16,7 +16,7 @@ public class MCTS
 	// The minimum number of visits every node should have before it will be rated by UCT.
 	private static final int CONFIDENCE_THRESHOLD = 1;
 	
-	private static final int MAX_TICKS = 5;
+	private static final int MAX_SIMULATION_TICKS = 5;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html
@@ -33,13 +33,11 @@ public class MCTS
 	{
 		Node rootNode = new Node(levelScene, null);
 		
-//		synchronizeSimulation(rootNode);
-		
 		while (System.currentTimeMillis() < System.currentTimeMillis() + timeLimit)
 		{
 			Node v1 = treePolicy(rootNode);
 			
-			float reward = defaultPolicy(v1, MAX_TICKS);
+			float reward = defaultPolicy(v1, MAX_SIMULATION_TICKS);
 			
 			backpropagate(v1, reward);
 		}
@@ -97,8 +95,9 @@ public class MCTS
 			e.printStackTrace();
 		}
 		
-		// TODO: Advance the levelScene 1 tick.
-		//levelSceneCopy.simulate(untriedAction);
+		// Advance the levelScene 1 tick with the new action. 
+		// This child then represents the world state after taking that action.
+		levelSceneClone.advanceStep(untriedAction);
 		
 		// Create new child representing the world state after performing the untried action.
 		Node child = new Node(levelSceneClone, v);
@@ -136,10 +135,10 @@ public class MCTS
 	 */
 	private boolean[] getUntriedAction(Node v)
 	{
-		ArrayList<boolean[]> possibleActions = getPossibleActions();
+//		ArrayList<boolean[]> possibleActions = getPossibleActions();
 		
 		outer:
-		for (boolean[] possibleAction : possibleActions) 
+		for (boolean[] possibleAction : v.actions) 
 		{
 			for (Node child : v.children) 
 			{
@@ -164,50 +163,6 @@ public class MCTS
 		return action;
 	}
 	
-	/**
-	 * TODO
-	 * @param v
-	 * @return A list of all possible moves from current world state represented by Node v.
-	 */
-	private ArrayList<boolean[]> getPossibleActions()
-	{
-		ArrayList<boolean[]> possibleActions = new ArrayList<boolean[]>();
-		
-			// jump
-		possibleActions.add(createAction(false, false, false, true, false));
-		possibleActions.add(createAction(false, false, false, true, true));
-		
-		// run right
-		possibleActions.add(createAction(false, true, false, false, true));
-		possibleActions.add(createAction(false, true, false, true, true));
-		possibleActions.add(createAction(false, true, false, false, false));
-		possibleActions.add(createAction(false, true, false, true, false));
-		
-		// run left
-		possibleActions.add(createAction(true, false, false, false, false));
-		possibleActions.add(createAction(true, false, false, true, false));
-		possibleActions.add(createAction(true, false, false, false, true));
-		possibleActions.add(createAction(true, false, false, true, true));
-		
-		return possibleActions;
-	}
-	
-	/**
-	 * TODO
-	 * @param v
-	 * @return Creates the the required action with the input.
-	 */
-	private boolean[] createAction(boolean left, boolean right, boolean down, boolean jump, boolean speed)
-    {
-    	boolean[] action = new boolean[5];
-    	action[Mario.KEY_DOWN] = down;
-    	action[Mario.KEY_JUMP] = jump;
-    	action[Mario.KEY_LEFT] = left;
-    	action[Mario.KEY_RIGHT] = right;
-    	action[Mario.KEY_SPEED] = speed;
-    	return action;
-    }
-	
 	
 	/**
 	 * TODO
@@ -217,7 +172,7 @@ public class MCTS
 	 */
 	private boolean isTerminalState(Node v)
 	{
-		return true;
+		return v.levelScene.mario.isDead() || v.levelScene.isLevelFinished();
 	}
 	
 	
@@ -240,17 +195,35 @@ public class MCTS
 		}
 		
 		// Get random possible action.
-		ArrayList<boolean[]> possibleActions = getPossibleActions();
-		boolean[] randomAction = possibleActions.get(rng.nextInt(possibleActions.size()));
+		boolean[] randomAction = v.actions.get(rng.nextInt(v.actions.size()));
 		
+		// Get Mario's starting x
+		float firstX = levelSceneClone.mario.x;
 		
-		// TODO: Advance levelScene using random possible actions until maxTicks budget is reached.
+		// Advance levelScene using random possible actions until maxTicks budget is reached.
 		for (int i = 0; i < maxTicks; i++) 
 		{
-			// simulate(action)
+			levelSceneClone.advanceStep(randomAction);
+			
+			// Check if Mario died
+			if (true)
+			{
+				break;
+			}
 		}
 		
+		// Check if Mario died
+		
+		
+		// Get Mario's x after simulation is over
+		
+		
 		// TODO: Calculate the reward when playout is finished (e.g. based on how far mario got)
+		return 0;
+	}
+	
+	private float calculateReward(Node v)
+	{
 		return 0;
 	}
 	
