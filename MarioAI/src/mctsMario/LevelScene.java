@@ -902,12 +902,12 @@ public final class LevelScene implements SpriteContext, Cloneable
 	public void advanceStep(boolean[] action)
 	{
 		this.mario.setKeys(action); 
-		System.out.println("[" 
-				+ (action[Mario.KEY_DOWN] ? "d" : "") 
-				+ (action[Mario.KEY_RIGHT] ? "r" : "")
-				+ (action[Mario.KEY_LEFT] ? "l" : "")
-				+ (action[Mario.KEY_JUMP] ? "j" : "")
-				+ (action[Mario.KEY_SPEED] ? "s" : "") + "]");
+//		System.out.println("[" 
+//				+ (action[Mario.KEY_DOWN] ? "d" : "") 
+//				+ (action[Mario.KEY_RIGHT] ? "r" : "")
+//				+ (action[Mario.KEY_LEFT] ? "l" : "")
+//				+ (action[Mario.KEY_JUMP] ? "j" : "")
+//				+ (action[Mario.KEY_SPEED] ? "s" : "") + "]");
 		this.tick();
 	}
 }
