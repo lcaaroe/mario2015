@@ -316,12 +316,8 @@ public final class LevelScene implements SpriteContext, Cloneable
 					}
 				}
 			}
-//		for (Sprite sprite : sprites)
-//			System.out.println("Sprite X Pos Before Tick: "+sprite.x);
 		for (Sprite sprite : sprites)
 			sprite.tick();
-//		for (Sprite sprite : sprites)
-//			System.out.println("Sprite X Pos After Tick: "+sprite.x);
 
 		byte levelElement = level.getBlock(mario.mapX, mario.mapY);
 		if (levelElement == (byte) (13 + 3 * 16) || levelElement == (byte) (13 + 5 * 16))
@@ -404,7 +400,6 @@ public final class LevelScene implements SpriteContext, Cloneable
 				
 			}
 		}
-		System.out.println(MarioXInMap+","+MarioYInMap);
 		//    int HalfObsWidth = 11;
 		//    int HalfObsHeight = 11;
 		//    int MarioXInMap = (int)mario.x/16;

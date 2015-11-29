@@ -67,75 +67,18 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		clonedLevel.level = new Level(1500,15);
 		clonedLevel.resetDefault();
 		
+		clonedLevel.advanceStep(action);
+		
 		clonedLevel.mario.x = realMarioPos[0];		
 		clonedLevel.mario.xa = (realMarioPos[0] - lastX) *0.89f;		
 		if (Math.abs(clonedLevel.mario.y - realMarioPos[1]) > 0.1f)
 			clonedLevel.mario.ya = (realMarioPos[1] - lastY) * 0.85f;// + 3f;
 		clonedLevel.mario.y = realMarioPos[1];
-		
-		LevelScene levelTest = null;
-		try
-		{
-			levelTest = (LevelScene) clonedLevel.clone();
-		} catch (CloneNotSupportedException e)
-		{
-			e.printStackTrace();
-		}
-		
-		
-//		//Get colliders to work.
-//		simulator.advanceStep(action);		
-		
-//		simulator.levelScene.mario.x = realMarioPos[0];		
-//		simulator.levelScene.mario.xa = (realMarioPos[0] - lastX) *0.89f;		
-//		if (Math.abs(simulator.levelScene.mario.y - realMarioPos[1]) > 0.1f)
-//			simulator.levelScene.mario.ya = (realMarioPos[1] - lastY) * 0.85f;// + 3f;
-//		simulator.levelScene.mario.y = realMarioPos[1];
-		
-		System.out.println("xa: " +clonedLevel.mario.xa);
-		System.out.println("ya: " +clonedLevel.mario.ya);
-		
 
 		clonedLevel.setLevelScene(cloned);
 		clonedLevel.setEnemies(enemies);
 		lastX = realMarioPos[0];
 		lastY = realMarioPos[1];
-		
-		action[Mario.KEY_RIGHT] = true;
-		action[Mario.KEY_SPEED] = true;
-		action[Mario.KEY_SPEED] = action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
-		
-		System.out.println("Before: "+levelTest.mario.x+","+levelTest.mario.y);
-		System.out.println("before: "+levelTest.isMarioOnGround());
-		levelTest.advanceStep(action);
-		System.out.println("After: "+levelTest.mario.x+","+levelTest.mario.y);
-		System.out.println("testeru: "+levelTest.isMarioOnGround());
-		
-//		System.out.println("Environment: Jump: "+isMarioAbleToJump+", Grounded: "+!isMarioOnGround);
-//		System.out.println("Simulator: Jump: "+clonedLevel.mario.mayJump()+", Grounded: "+!clonedLevel.mario.isOnGround());
-		
-//		for(int y=0; y<cloned.length; y++)
-//		{
-//			String meow = "";
-//			for(int x=0; x<cloned[y].length; x++)
-//			{
-//				meow += cloned[y][x]+",";
-//			}
-//			System.out.println(meow);
-//		}
-		
-		
-		//	if(isMarioAbleToJump)
-		//		action[Mario.KEY_JUMP] = true;
-		//	else
-		//		action[Mario.KEY_JUMP] = false;
-		//action[Mario.KEY_SPEED] = action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
-
-//		for (int i = 0; i < action.length; i++) {
-//			
-//			action[i] = false;
-//		}
-		
 		
 		System.out.println("Action: [" 
 				+ (action[Mario.KEY_DOWN] ? "d" : "") 
@@ -149,12 +92,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 	@Override
 	public void reset()
 	{
-//		simulator = new mctsSimulator();
 		for (int i = 0; i < action.length; ++i)
 			action[i] = false;
-		//action[Mario.KEY_JUMP] = true;
-		action[Mario.KEY_RIGHT] = true;
-		action[Mario.KEY_SPEED] = true;
-		action[Mario.KEY_SPEED] = action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
 	}
 }

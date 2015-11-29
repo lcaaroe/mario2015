@@ -259,7 +259,6 @@ public final class Mario extends Sprite implements Cloneable
 
 	public void move()
 	{
-		System.out.println("JumpTime: "+jumpTime);
 		if (GlobalOptions.isFly)
 		{
 			xa = ya = 0;
@@ -349,11 +348,8 @@ public final class Mario extends Sprite implements Cloneable
 		//    float Wind = 0.2f;
 		//    float windAngle = 180;
 		//    xa += Wind * Math.cos(windAngle * Math.PI / 180);
-		System.out.println("Grounded:" + onGround);
 		if (keys[KEY_JUMP] || (jumpTime < 0 && !onGround && !sliding))
 		{
-			if(!onGround || sliding)
-				System.out.println("TEST:"+onGround+","+sliding);
 			if (jumpTime < 0)
 			{
 				xa = xJumpSpeed;
@@ -363,7 +359,6 @@ public final class Mario extends Sprite implements Cloneable
 			{
 				xJumpSpeed = 0;
 				yJumpSpeed = -1.9f;
-				System.out.println("TEST:"+ (int)jT);
 				jumpTime = (int) jT;
 				ya = jumpTime * yJumpSpeed;
 				onGround = false;
@@ -380,7 +375,6 @@ public final class Mario extends Sprite implements Cloneable
 				facing = -facing;
 			} else if (jumpTime > 0)
 			{
-				System.out.println("TEST");
 				xa += xJumpSpeed;
 				ya = jumpTime * yJumpSpeed;
 				jumpTime--;
@@ -453,11 +447,8 @@ public final class Mario extends Sprite implements Cloneable
 		}
 
 		//onGround = false;
-		System.out.println("Before:"+onGround);
 		move(xa, 0);
-		System.out.println("After 1:"+onGround);
 		move(0, ya);
-		System.out.println("After 2:"+onGround);
 		if (y > levelScene.level.height * LevelScene.cellSize + LevelScene.cellSize)
 		{
 			die("Gap");
@@ -493,8 +484,6 @@ public final class Mario extends Sprite implements Cloneable
 			xa *= (AIR_INERTIA + windScale(windCoeff, facing) + iceScale(iceCoeff));
 		}
 
-		//    if /
-		System.out.println("test3:"+onGround);
 		if (!onGround)
 		{
 			//        ya += 3;
@@ -648,10 +637,8 @@ public final class Mario extends Sprite implements Cloneable
 			}
 			if (ya > 0)
 			{
-				System.out.println("TESTESTESTSET");
 				y = (int) ((y - 1) / 16 + 1) * 16 - 1;
 				onGround = true;
-				System.out.println("groooound:"+onGround);
 			}
 			return false;
 		} else
