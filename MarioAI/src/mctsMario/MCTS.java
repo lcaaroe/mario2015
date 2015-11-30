@@ -17,7 +17,7 @@ public class MCTS
 	// The minimum number of visits every node should have before it will be rated by UCT.
 	private static final int CONFIDENCE_THRESHOLD = 1;
 	
-	private static final int MAX_SIMULATION_TICKS = 5;
+	private static final int MAX_SIMULATION_TICKS = 3;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html
@@ -27,7 +27,6 @@ public class MCTS
 	
 	// TEST/DEBUG FIELDS
 	int treePolicyCounter = 0;
-	int searchCounter = 0;
 	
 	
 	/**
@@ -38,6 +37,7 @@ public class MCTS
 	public boolean[] search(LevelScene levelScene)
 	{
 		Node rootNode = new Node(levelScene, null);
+		int searchCounter = 0;
 		
 		long dueTime = System.currentTimeMillis() + timeLimit;
 		while (System.currentTimeMillis() < dueTime)
@@ -61,7 +61,9 @@ public class MCTS
 		Node bestChild = getBestChild(rootNode, 0);
 
 		// Return action corresponding to best child.
-		if (Util.lcaDebug)System.out.println("In main search | Best child with parent action = " + bestChild.parentActionAsString()); // TEST/DEBUG
+		System.out.println("In main search | rootNode children: " + rootNode.childrenAsString());
+		if (true)System.out.println("In main search | Best child with parent action = " + bestChild.parentActionAsString()); // TEST/DEBUG
+		System.out.println();
 		if (Util.lcaDebug)System.out.println("In main search | bestChild.ParentAction.length = " + bestChild.parentAction.length);
 		return bestChild.parentAction;
 	}
@@ -265,8 +267,9 @@ public class MCTS
 		// Get random possible action.
 		boolean[] randomAction = v.actions.get(rng.nextInt(v.actions.size()));
 		
-		// Get Mario's starting x
+		// Get Mario's starting x and mode (fire, large, small)
 		float marioFirstX = levelSceneClone.mario.x;
+		int marioFirstMode = levelSceneClone.getMarioMode();
 		
 		// Advance levelScene using random possible actions until maxTicks budget is reached.
 		int i = 0;
@@ -283,7 +286,7 @@ public class MCTS
 		}
 			
 		// Get reward for current state.
-		float reward = calculateReward(levelSceneClone, marioFirstX, i);
+		float reward = calculateReward(levelSceneClone, marioFirstX, marioFirstMode, i);
 		
 		if (Util.lcaDebug) System.out.println("In defaultPolicy | After simulation. Reward = " + reward); //TEST/DEBUG
 		return reward;
@@ -304,7 +307,7 @@ public class MCTS
 	 * @param ticksSimulated How many ticks were simulated in default policy before terminating.
 	 * @return The reward for the current state.
 	 */
-	private float calculateReward(LevelScene levelScene, float marioFirstX, int ticksSimulated)
+	private float calculateReward(LevelScene levelScene, float marioFirstX, int marioFirstMode, int ticksSimulated)
 	{
 		// If Mario is dead
 		if (levelScene.getMarioStatus() == Mario.STATUS_DEAD)
@@ -331,7 +334,12 @@ public class MCTS
 			// If Mario has not made any progress to the right, there is no reward.
 			reward = 0;
 		}
-		
+		// If mario shrunk (was hit by enemy without dying)
+		if (levelScene.getMarioStatus() < marioFirstMode)
+		{
+			reward = reward * 0.5f;
+		}
+				
 		if (Util.lcaDebug)System.out.println("In calculateReward | FirstX = " + marioFirstX + ", currentX = " + levelScene.mario.x);
 		if (Util.lcaDebug)System.out.println("In calculateReward | Distance covered = " + distanceCovered);
 		

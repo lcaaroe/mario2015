@@ -77,13 +77,46 @@ public class Node
 	 */
 	public String parentActionAsString()
 	{
-		String s= "[" 
+		String s = "[" 
 				+ (parentAction[Mario.KEY_DOWN] ? "d" : "") 
 				+ (parentAction[Mario.KEY_RIGHT] ? "r" : "")
 				+ (parentAction[Mario.KEY_LEFT] ? "l" : "")
 				+ (parentAction[Mario.KEY_JUMP] ? "j" : "")
 				+ (parentAction[Mario.KEY_SPEED] ? "s" : "") + "]";
 		
+		return s;
+	}
+	
+	/**
+	 * @return String of this node's children. Each child on a new line.
+	 */
+	public String childrenAsString()
+	{
+		String s = "[";
+		
+		for (Node child : children) 
+		{
+			s += "Action: " + child.parentActionAsString()
+					+ ", visited: " + child.timesVisited
+					+ ", reward: " + child.reward
+					+ ", children: " + child.children.size()
+					+ "]" + '\n';
+		}
+		for (int i = 0; i < children.size(); i++) 
+		{
+			Node child = children.get(i);
+			s += "Action: " + child.parentActionAsString()
+			+ ", visited: " + child.timesVisited
+			+ ", reward: " + child.reward
+			+ ", children: " + child.children.size()
+			+ "]";
+			
+			if (i == children.size()-1)
+			{
+				s+= '\n';
+			}
+		}
+
 		return s;
 	}
 }
