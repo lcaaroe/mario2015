@@ -719,6 +719,7 @@ public final class Mario extends Sprite implements Cloneable
 
 	public void getHurt(final int spriteKind)
 	{
+		System.out.println("HURT TIME");
 		if (deathTime > 0 || isMarioInvulnerable) return;
 
 		if (invulnerableTime > 0) return;
@@ -727,6 +728,7 @@ public final class Mario extends Sprite implements Cloneable
 		levelScene.appendBonusPoints(-MarioEnvironment.IntermediateRewardsSystemOfValues.kills);
 		if (large)
 		{
+			System.out.println("GOT HURT");
 			//        levelScene.paused = true;
 			//        powerUpTime = -3 * FractionalPowerUpTime;
 			if (fire)

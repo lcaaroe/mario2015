@@ -736,6 +736,7 @@ public void getHurt(final int spriteKind)
     {
         die("Collision with a creature [" + Sprite.getNameByKind(spriteKind) + "]");
     }
+    System.out.println(levelScene.mario.getMode());
 }
 
 public void win()

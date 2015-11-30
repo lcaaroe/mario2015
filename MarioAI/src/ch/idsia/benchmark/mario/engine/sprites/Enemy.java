@@ -163,6 +163,7 @@ public void collideCheck()
                 }
             } else
             {
+            	System.out.println("FUCK THIS SHIT");
                 levelScene.mario.getHurt(this.kind);
             }
         }
