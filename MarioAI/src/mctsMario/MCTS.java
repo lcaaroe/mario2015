@@ -1,6 +1,5 @@
 package mctsMario;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import mctsMario.sprites.Mario;
@@ -17,7 +16,7 @@ public class MCTS
 	// The minimum number of visits every node should have before it will be rated by UCT.
 	private static final int CONFIDENCE_THRESHOLD = 1;
 	
-	private static final int MAX_SIMULATION_TICKS = 2;
+	private static final int MAX_SIMULATION_TICKS = 8;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html
@@ -77,11 +76,15 @@ public class MCTS
 	{
 //		treePolicyCounter++; // TEST/DEBUG
 //		System.out.println("TreePolicy counter = " + treePolicyCounter); // TEST/DEBUG
-		while (!isTerminalState(v.levelScene))
-//			int i = 0;
-//		while (i < 200)
+//		while (!isTerminalState(v.levelScene))
+		int i = 0;
+		while (i < 1000) // Arbitrary limit at the moment
 		{
-//			i++;
+			i++;
+			if (i==1000) // TEST/DEBUG
+			{
+				System.out.println("treepol limit reached");
+			}
 			// if v is not fully expanded, find and add new child.
 			if (!isNodeFullyExpanded(v))
 			{
@@ -127,6 +130,12 @@ public class MCTS
 		child.parentAction = untriedAction;
 
 		v.children.add(child);
+
+		// TEST/DEBUG
+//		if (child.levelScene.getMarioMode() != v.levelScene.getMarioMode())
+//		{
+//			System.out.println("in expand | mario was hit in child state");
+//		}
 		
 		return child;
 	}
@@ -238,10 +247,19 @@ public class MCTS
 		boolean[] randomAction = v.actions.get(rng.nextInt(v.actions.size()));
 		
 		// Get Mario's starting x and mode (fire, large, small)
-		float marioFirstX = levelSceneClone.mario.x;
-		int marioFirstMode = levelSceneClone.getMarioMode();
+		float firstMarioX = levelSceneClone.mario.x;
+		int firstMarioMode = levelSceneClone.getMarioMode();
+		int parentMarioMode = v.parent.levelScene.getMarioMode();
 		
+		if (firstMarioMode < parentMarioMode)
+		{
+			System.out.println("Mario was hit since parent state");
+		}
+		
+		
+//		System.out.println("DefaultPolicy mode BEFORE: " + marioFirstMode);
 		// Advance levelScene using random possible actions until maxTicks budget is reached.
+		// 
 		int i = 0;
 		while (i < maxTicks)
 		{
@@ -254,13 +272,34 @@ public class MCTS
 			}
 			i++;
 		}
+		
+		
+//		System.out.println("parent, first, current = " + parentMarioMode + "," + firstMarioMode + "," + levelSceneClone.getMarioMode());
+		
+//		System.out.println("DefaultPolicy mode after " + i + " ticks: " + levelSceneClone.getMarioMode());
 			
 		// Get reward for current state.
-		float reward = calculateReward(levelSceneClone, marioFirstX, marioFirstMode, i);
+		float reward = calculateReward(levelSceneClone, firstMarioX, firstMarioMode, i);
 		
 		if (Util.lcaDebug) System.out.println("In defaultPolicy | After simulation. Reward = " + reward); //TEST/DEBUG
 		return reward;
 	}
+	
+//	/**
+//	 * Checks if Mario has been hit by an enemy between the two given states.
+//	 * Mario modes: small = 0, large = 1, fire = 2.
+//	 * @param previous
+//	 * @param current
+//	 * @return
+//	 */
+//	private boolean wasMarioHit(LevelScene current, LevelScene previous)
+//	{
+//		if (current.getMarioMode() < previous.getMarioMode())
+//		{
+//			return true;
+//		}
+//		return false;
+//	}
 	
 	/**
 	 * Checks the current state of Mario in the given LevelScene, and calculates the reward based on the state.
@@ -282,11 +321,15 @@ public class MCTS
 		// If Mario is dead
 		if (levelScene.getMarioStatus() == Mario.STATUS_DEAD)
 		{
+//			System.out.println("DEAD in simulation");
+//			System.out.println("--------");
 			return 0;
 		}
 		// If mario completed the level
 		if (levelScene.getMarioStatus() == Mario.STATUS_WIN)
 		{
+			
+//			System.out.println("WON in simulation");
 			return 1;
 		}
 		/* If simulation terminated before reaching terminal state, we approximate the reward.
@@ -295,9 +338,9 @@ public class MCTS
 		 */
 		float distanceCovered = levelScene.mario.x - marioFirstX;
 		float reward = 0;
-		if (distanceCovered >= 0)
+		if (distanceCovered > 0)
 		{
-			reward = (distanceCovered/(11*ticksSimulated));
+			reward = 0.5f + (distanceCovered/(11*ticksSimulated));
 		}
 		else
 		{
@@ -306,7 +349,8 @@ public class MCTS
 		}
 		// If mario shrunk (was hit by enemy without dying)
 		//System.out.println(marioFirstMode+","+levelScene.getMarioStatus());
-		if (levelScene.getMarioStatus() < marioFirstMode)
+//		System.out.println("levelScene.getMarioMode, marioFirstNode = " + levelScene.getMarioMode() + "," + marioFirstMode);
+		if (levelScene.getMarioMode() < marioFirstMode)
 		{
 			System.out.println("STATUS CHANGE");
 			reward = reward * 0.5f;

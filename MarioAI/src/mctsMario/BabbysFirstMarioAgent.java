@@ -148,6 +148,11 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		
 		
 		boolean[] newAction = mcts.search(clonedLevel);
+		
+		if (environment.getMarioStatus() == Mario.STATUS_WIN)
+		{
+			System.out.println("Babby saw the win");
+		}
 //		action = mcts.search(clonedLevel);
 		//System.out.println("Action length = " + newAction.length);
 //		for (int i = 0; i < newAction.length; ++i)
