@@ -17,7 +17,7 @@ public class MCTS
 	// The minimum number of visits every node should have before it will be rated by UCT.
 	private static final int CONFIDENCE_THRESHOLD = 1;
 	
-	private static final int MAX_SIMULATION_TICKS = 1;
+	private static final int MAX_SIMULATION_TICKS = 5;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html

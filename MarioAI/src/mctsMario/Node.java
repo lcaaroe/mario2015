@@ -35,18 +35,18 @@ public class Node
 	{
 		ArrayList<boolean[]> possibleActions = new ArrayList<boolean[]>();
 		
-		possibleActions.add(createAction(false, false, false, true, false)); // Jump
+		possibleActions.add(createAction(false, false, false, true, false, false)); // Jump
 //		possibleActions.add(createAction(false, false, false, true, true)); // Jump + run
 		
-		possibleActions.add(createAction(false, true, false, false, false)); // Right
-		possibleActions.add(createAction(false, true, false, false, true)); // Right + run
-		possibleActions.add(createAction(false, true, false, true, false)); // Right + jump
-		possibleActions.add(createAction(false, true, false, true, true)); // Right + jump + run
+		possibleActions.add(createAction(false, true, false, false, false, false)); // Right
+		possibleActions.add(createAction(false, true, false, false, true, false)); // Right + run
+		possibleActions.add(createAction(false, true, false, true, false, false)); // Right + jump
+		possibleActions.add(createAction(false, true, false, true, true, false)); // Right + jump + run
 		
-		possibleActions.add(createAction(true, false, false, false, false)); // Left
-		possibleActions.add(createAction(true, false, false, false, true)); //Left + run
-		possibleActions.add(createAction(true, false, false, true, false)); // Left + jump
-		possibleActions.add(createAction(true, false, false, true, true)); //Left + jump + run
+		possibleActions.add(createAction(true, false, false, false, false, false)); // Left
+		possibleActions.add(createAction(true, false, false, false, true, false)); //Left + run
+		possibleActions.add(createAction(true, false, false, true, false, false)); // Left + jump
+		possibleActions.add(createAction(true, false, false, true, true, false)); //Left + jump + run
 		
 		return possibleActions;
 	}
@@ -59,14 +59,15 @@ public class Node
 	 * @param run
 	 * @return A combination of button presses making up an action, represented by a boolean array.
 	 */
-	private boolean[] createAction(boolean left, boolean right, boolean down, boolean jump, boolean run)
+	private boolean[] createAction(boolean left, boolean right, boolean down, boolean jump, boolean run, boolean up)
 	{
-		boolean[] action = new boolean[5];
+		boolean[] action = new boolean[6];
     	action[Mario.KEY_DOWN] = down;
     	action[Mario.KEY_JUMP] = jump;
     	action[Mario.KEY_LEFT] = left;
     	action[Mario.KEY_RIGHT] = right;
     	action[Mario.KEY_SPEED] = run;
+    	action[Mario.KEY_UP] = up;
     	
     	return action;
 	}

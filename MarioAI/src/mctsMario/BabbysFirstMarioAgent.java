@@ -27,8 +27,6 @@
 
 package mctsMario;
 
-import java.util.ArrayList;
-
 import ch.idsia.agents.Agent;
 import ch.idsia.agents.controllers.BasicMarioAIAgent;
 import ch.idsia.benchmark.mario.environments.Environment;
@@ -136,7 +134,6 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		
 		boolean[] newAction = mcts.search(clonedLevel);
 //		action = mcts.search(clonedLevel);
-		
 		System.out.println("Action length = " + newAction.length);
 		return newAction;
 	}
