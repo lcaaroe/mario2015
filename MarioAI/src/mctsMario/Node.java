@@ -94,14 +94,6 @@ public class Node
 	{
 		String s = "[";
 		
-		for (Node child : children) 
-		{
-			s += "Action: " + child.parentActionAsString()
-					+ ", visited: " + child.timesVisited
-					+ ", reward: " + child.reward
-					+ ", children: " + child.children.size()
-					+ "]" + '\n';
-		}
 		for (int i = 0; i < children.size(); i++) 
 		{
 			Node child = children.get(i);
@@ -111,7 +103,7 @@ public class Node
 			+ ", children: " + child.children.size()
 			+ "]";
 			
-			if (i == children.size()-1)
+			if (i != children.size()-1)
 			{
 				s+= '\n';
 			}
