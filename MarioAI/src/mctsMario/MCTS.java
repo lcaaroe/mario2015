@@ -251,7 +251,7 @@ public class MCTS
 		int firstMarioMode = levelSceneClone.getMarioMode();
 		int parentMarioMode = v.parent.levelScene.getMarioMode();
 		
-		if (firstMarioMode < parentMarioMode)
+		if (firstMarioMode != parentMarioMode)
 		{
 			System.out.println("Mario was hit since parent state");
 		}
@@ -349,7 +349,7 @@ public class MCTS
 		}
 		// If mario shrunk (was hit by enemy without dying)
 		//System.out.println(marioFirstMode+","+levelScene.getMarioStatus());
-//		System.out.println("levelScene.getMarioMode, marioFirstNode = " + levelScene.getMarioMode() + "," + marioFirstMode);
+		System.out.println("levelScene.getMarioMode, marioFirstNode = " + levelScene.getMarioMode() + "," + marioFirstMode);
 		if (levelScene.getMarioMode() < marioFirstMode)
 		{
 			System.out.println("STATUS CHANGE");
