@@ -70,6 +70,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		byte[][] cloned = environment.getLevelSceneObservationZ(1);
 		float[] enemies = environment.getEnemiesFloatPos();
 		float[] realMarioPos = environment.getMarioFloatPos();
+
 		
 		LevelScene clonedLevel  = new LevelScene();
 		clonedLevel.level = new Level(1500,15);
@@ -149,6 +150,8 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		boolean[] newAction = mcts.search(clonedLevel);
 //		action = mcts.search(clonedLevel);
 		//System.out.println("Action length = " + newAction.length);
+//		for (int i = 0; i < newAction.length; ++i)
+//			newAction[i] = false;
 		return newAction;
 	}
 

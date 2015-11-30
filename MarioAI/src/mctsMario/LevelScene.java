@@ -839,8 +839,8 @@ public final class LevelScene implements SpriteContext, Cloneable
 		for (int i = 0; i < enemies.length; i += 3)
 		{
 			int kind = (int) enemies[i];
-			float x = enemies[i+1];
-			float y = enemies[i+2];
+			float x = enemies[i+1]+mario.x;
+			float y = enemies[i+2]+mario.y;
 			int type = -1;
 	        boolean winged = false;
 	        switch(kind)
