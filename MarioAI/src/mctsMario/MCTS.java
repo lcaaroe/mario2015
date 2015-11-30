@@ -325,9 +325,9 @@ public class MCTS
 		 */
 		float distanceCovered = levelScene.mario.x - marioFirstX;
 		float reward = 0;
-		if (distanceCovered > 0)
+		if (distanceCovered >= 0)
 		{
-			reward = distanceCovered/(11*ticksSimulated);
+			reward = 0.5f + distanceCovered/(11*ticksSimulated);
 		}
 		else
 		{
