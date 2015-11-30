@@ -349,11 +349,10 @@ private boolean isBlocking(float _x, float _y, float xa, float ya)
     int x = (int) (_x / 16);
     int y = (int) (_y / 16);
     if (x == (int) (this.x / 16) && y == (int) (this.y / 16)) return false;
-
-    boolean blocking = levelScene.level.isBlocking(x, y, xa, ya);
+    boolean blocking = levelScene.level.isBlocking(x, y+1, xa, ya);
 
 //        byte block = levelScene.level.getBlock(x, y);
-
+    //System.out.println(blocking);
     return blocking;
 }
 

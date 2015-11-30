@@ -655,6 +655,7 @@ public final class Mario extends Sprite implements Cloneable
 		int y = (int) (_y / 16);
 		if (x == (int) (this.x / 16) && y == (int) (this.y / 16)) return false;
 		boolean blocking = levelScene.level.isBlocking(x, y, xa, ya);
+
 		byte block = levelScene.level.getBlock(x, y);
 
 		if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_PICKUPABLE) > 0)
@@ -729,6 +730,7 @@ public final class Mario extends Sprite implements Cloneable
 		{
 			//        levelScene.paused = true;
 			//        powerUpTime = -3 * FractionalPowerUpTime;
+			System.out.println("ouch");
 			if (fire)
 			{
 				levelScene.mario.setMode(true, false);

@@ -121,11 +121,9 @@ public class MCTS
 		// Advance the levelScene 1 tick with the new action. 
 		// This child then represents the world state after taking that action.
 		levelSceneClone.advanceStep(untriedAction);
-		
 		// Create new child representing the world state after performing the untried action.
 		Node child = new Node(levelSceneClone, v);
 		child.parentAction = untriedAction;
-
 		v.children.add(child);
 		
 		return child;
@@ -245,8 +243,17 @@ public class MCTS
 		int i = 0;
 		while (i < maxTicks)
 		{
+			float before = levelSceneClone.mario.x;
+//			float[] testy = levelSceneClone.getEnemiesFloatPos();
+//			if(testy.length > 0)
+//				System.out.println(testy[0]+","+testy[1]+","+testy[2]);
 			levelSceneClone.advanceStep(randomAction);
-			
+//			float after = levelSceneClone.mario.x;
+//			
+//			if(after != before)
+//			{
+//				System.out.println("changed");
+//			}
 			// If game state is terminal after ticking, break out.
 			if (isTerminalState(levelSceneClone))
 			{
@@ -256,6 +263,7 @@ public class MCTS
 		}
 			
 		// Get reward for current state.
+		//System.out.println(levelSceneClone.mario.x+","+marioFirstX);
 		float reward = calculateReward(levelSceneClone, marioFirstX, marioFirstMode, i);
 		
 		if (Util.lcaDebug) System.out.println("In defaultPolicy | After simulation. Reward = " + reward); //TEST/DEBUG
@@ -305,8 +313,9 @@ public class MCTS
 			reward = 0;
 		}
 		// If mario shrunk (was hit by enemy without dying)
-		//System.out.println(marioFirstMode+","+levelScene.getMarioStatus());
-		if (levelScene.getMarioStatus() < marioFirstMode)
+		
+		//System.out.println(marioFirstMode+","+levelScene.getMarioMode());
+		if (levelScene.getMarioMode() < marioFirstMode)
 		{
 			System.out.println("STATUS CHANGE");
 			reward = reward * 0.5f;
