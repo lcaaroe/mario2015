@@ -35,8 +35,9 @@ public class Node
 	{
 		ArrayList<boolean[]> possibleActions = new ArrayList<boolean[]>();
 		
+		possibleActions.add(createAction(false, false, false, false, false, false)); // Do nothing
+		
 		possibleActions.add(createAction(false, false, false, true, false, false)); // Jump
-//		possibleActions.add(createAction(false, false, false, true, true)); // Jump + run
 		
 		possibleActions.add(createAction(false, true, false, false, false, false)); // Right
 		possibleActions.add(createAction(false, true, false, false, true, false)); // Right + run
@@ -72,6 +73,15 @@ public class Node
     	return action;
 	}
 	
+	
+	
+	public boolean[] createInvalidAction()
+	{
+		boolean[] action = null;
+		
+		return action;
+	}
+	
 	/**
 	 * @return String of the combination of buttons represented by parent action.
 	 */
@@ -100,13 +110,21 @@ public class Node
 			s += "Action: " + child.parentActionAsString()
 			+ ", visited: " + child.timesVisited
 			+ ", reward: " + child.reward
+			+ ", reward/visits: " + (child.reward/child.timesVisited)
 			+ ", children: " + child.children.size()
 			+ "]";
+			
+			if (child.reward/child.timesVisited > 1)
+			{
+				s+= "WARNING";
+			}
 			
 			if (i != children.size()-1)
 			{
 				s+= '\n';
 			}
+			
+			
 		}
 
 		return s;
