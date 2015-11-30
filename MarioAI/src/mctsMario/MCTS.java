@@ -8,7 +8,7 @@ import mctsMario.sprites.Mario;
 public class MCTS 
 {
 	// Max allowed time (in ms) to run the search. Algorithm needs a little time to select best child and exit.
-	private int timeLimit = 10;
+	private int timeLimit = 19;
 	
 	// Exploration coefficient (default ~0.707107...)
 	// "the value (...) was shown to satisfy the Hoeffding ineqality with rewards in the range [0,1]" (Browne et al., 2012)
@@ -17,7 +17,7 @@ public class MCTS
 	// The minimum number of visits every node should have before it will be rated by UCT.
 	private static final int CONFIDENCE_THRESHOLD = 1;
 	
-	private static final int MAX_SIMULATION_TICKS = 1;
+	private static final int MAX_SIMULATION_TICKS = 2;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html
@@ -27,7 +27,6 @@ public class MCTS
 	
 	// TEST/DEBUG FIELDS
 	int treePolicyCounter = 0;
-	int searchCounter = 0;
 	
 	
 	/**
@@ -38,6 +37,7 @@ public class MCTS
 	public boolean[] search(LevelScene levelScene)
 	{
 		Node rootNode = new Node(levelScene, null);
+		int searchCounter = 0;
 		
 		long dueTime = System.currentTimeMillis() + timeLimit;
 		while (System.currentTimeMillis() < dueTime)
@@ -61,8 +61,10 @@ public class MCTS
 		Node bestChild = getBestChild(rootNode, 0);
 
 		// Return action corresponding to best child.
-		if (Util.lcaDebug)System.out.println("In main search | Best child with parent action = " + bestChild.parentActionAsString()); // TEST/DEBUG
-		if (Util.lcaDebug)System.out.println("In main search | bestChild.ParentAction.length = " + bestChild.parentAction.length);
+//		System.out.println("In main search | rootNode children: " + '\n' + rootNode.childrenAsString());
+//		if (true)System.out.println("In main search | Best child with parent action = " + bestChild.parentActionAsString()); // TEST/DEBUG
+//		System.out.println();
+//		if (Util.lcaDebug)System.out.println("In main search | bestChild.ParentAction.length = " + bestChild.parentAction.length);
 		return bestChild.parentAction;
 	}
 	
@@ -73,10 +75,13 @@ public class MCTS
 	 */
 	private Node treePolicy(Node v)
 	{
-		treePolicyCounter++; // TEST/DEBUG
+//		treePolicyCounter++; // TEST/DEBUG
 //		System.out.println("TreePolicy counter = " + treePolicyCounter); // TEST/DEBUG
 		while (!isTerminalState(v.levelScene))
+//			int i = 0;
+//		while (i < 200)
 		{
+//			i++;
 			// if v is not fully expanded, find and add new child.
 			if (!isNodeFullyExpanded(v))
 			{
@@ -105,20 +110,6 @@ public class MCTS
 		// Get untried action (assumed that Node v is not fully expanded)
 		boolean[] untriedAction = getUntriedAction(v);
 		
-		// TEST/DEBUG
-//		String s = "[" 
-//				+ (untriedAction[Mario.KEY_DOWN] ? "d" : "") 
-//				+ (untriedAction[Mario.KEY_RIGHT] ? "r" : "")
-//				+ (untriedAction[Mario.KEY_LEFT] ? "l" : "")
-//				+ (untriedAction[Mario.KEY_JUMP] ? "j" : "")
-//				+ (untriedAction[Mario.KEY_SPEED] ? "s" : "") + "]";
-//		
-//		if (!s.equals("[]"))
-//		{
-//			System.out.println("Untried action selected: " + s);
-//			
-//		}
-		
 		// Clone Node v's levelScene.
 		LevelScene levelSceneClone = null;
 		try{
@@ -134,11 +125,6 @@ public class MCTS
 		// Create new child representing the world state after performing the untried action.
 		Node child = new Node(levelSceneClone, v);
 		child.parentAction = untriedAction;
-		if (!child.parentActionAsString().equals("[]"))
-		{
-			
-//			System.out.println("Child added with action = " + child.parentActionAsString());
-		}
 
 		v.children.add(child);
 		
@@ -155,27 +141,28 @@ public class MCTS
 	{
 		boolean[] a = getUntriedAction(v);
 		
-//		String s= "[" //TEST/DEBUG
-//				+ (a[Mario.KEY_DOWN] ? "d" : "") 
-//				+ (a[Mario.KEY_RIGHT] ? "r" : "")
-//				+ (a[Mario.KEY_LEFT] ? "l" : "")
-//				+ (a[Mario.KEY_JUMP] ? "j" : "")
-//				+ (a[Mario.KEY_SPEED] ? "s" : "") + "]";
-//		System.out.println("Untried Action: " + s + " is empty?");
-		
+		// TEST/DEBUG
 		// If the untried action returned is a 'do-nothing' action (all buttons false), then no untried actions exist.
-		for (int i = 0; i < a.length; i++) {
-			if (a[i] == true)
-			{
-//				System.out.println("False!"); //TEST/DEBUG
-//				System.out.println(); //TEST/DEBUG
-				return false;
-			}
+//		for (int i = 0; i < a.length; i++) {
+//			if (a[i] == true)
+//			{
+////				System.out.println("False!"); //TEST/DEBUG
+////				System.out.println(); //TEST/DEBUG
+//				return false;
+//			}
+//		}
+		// If action is null, no untried action exists, and node is fully expanded.
+		if (a == null)
+		{
+			return true;
 		}
-//		System.out.println("True!"); //TEST/DEBUG
-//		System.out.println(); //TEST/DEBUG
-		// If no buttons in the actions are set to true, this is a do-nothing action, and node is fully expanded.
-		return true;
+		else
+		{
+			return false;
+		}
+
+			// If no buttons in the actions are set to true, this is a do-nothing action, and node is fully expanded.
+//		return true;
 		
 	}
 	
@@ -183,32 +170,10 @@ public class MCTS
 	/**
 	 * Gets an untried action from Node v.
 	 * @param v
-	 * @return An untried action from Node v. Returns 'do-nothing' action if no untried actions exist.
+	 * @return An untried action from Node v. Returns 'do-nothing' (TODO: INVALID) action if no untried actions exist.
 	 */
 	private boolean[] getUntriedAction(Node v)
 	{
-		// TEST/DEBUG prints
-//		if (v == null) 
-//		{
-//			System.out.println("getUntriedAction: v == null");
-//		}
-//		
-//		if (v.children == null) 
-//		{
-//			System.out.println("getUntriedAction: v.children == null");
-//		}
-//		else
-//		{
-//			System.out.println("getUntriedAction: v.children.size = " + v.children.size());
-//		}
-//		if (v.actions == null) 
-//		{
-//			System.out.println("getUntriedAction: v.actions == null");
-//		}
-//		else
-//		{
-//			System.out.println("getUntriedAction: v.actions.size = " + v.actions.size());
-//		}
 		outer:
 		for (boolean[] possibleAction : v.actions) 
 		{
@@ -225,10 +190,17 @@ public class MCTS
 		}
 		
 		// If no untried actions exist, return a 'do-nothing' action. (Or null action?)
-		boolean[] action = new boolean[6];
-		for (int i = 0; i < action.length; i++) {
-			action[i] = false;
-		}
+//		boolean[] action = new boolean[6];
+//		for (int i = 0; i < action.length; i++) {
+//			action[i] = false;
+//		}
+	
+		// TEST/DEBUG - return action with up-key pressed
+		boolean[] action = null;
+//		for (int i = 0; i < action.length; i++)
+//		{
+//			
+//		}
 		return action;
 	}
 	
@@ -265,8 +237,9 @@ public class MCTS
 		// Get random possible action.
 		boolean[] randomAction = v.actions.get(rng.nextInt(v.actions.size()));
 		
-		// Get Mario's starting x
+		// Get Mario's starting x and mode (fire, large, small)
 		float marioFirstX = levelSceneClone.mario.x;
+		int marioFirstMode = levelSceneClone.getMarioMode();
 		
 		// Advance levelScene using random possible actions until maxTicks budget is reached.
 		int i = 0;
@@ -283,7 +256,7 @@ public class MCTS
 		}
 			
 		// Get reward for current state.
-		float reward = calculateReward(levelSceneClone, marioFirstX, i);
+		float reward = calculateReward(levelSceneClone, marioFirstX, marioFirstMode, i);
 		
 		if (Util.lcaDebug) System.out.println("In defaultPolicy | After simulation. Reward = " + reward); //TEST/DEBUG
 		return reward;
@@ -304,7 +277,7 @@ public class MCTS
 	 * @param ticksSimulated How many ticks were simulated in default policy before terminating.
 	 * @return The reward for the current state.
 	 */
-	private float calculateReward(LevelScene levelScene, float marioFirstX, int ticksSimulated)
+	private float calculateReward(LevelScene levelScene, float marioFirstX, int marioFirstMode, int ticksSimulated)
 	{
 		// If Mario is dead
 		if (levelScene.getMarioStatus() == Mario.STATUS_DEAD)
@@ -324,14 +297,21 @@ public class MCTS
 		float reward = 0;
 		if (distanceCovered >= 0)
 		{
-			reward = 0.5f + distanceCovered/(11*ticksSimulated);
+			reward = (distanceCovered/(11*ticksSimulated));
 		}
 		else
 		{
 			// If Mario has not made any progress to the right, there is no reward.
 			reward = 0;
 		}
-		
+		// If mario shrunk (was hit by enemy without dying)
+		//System.out.println(marioFirstMode+","+levelScene.getMarioStatus());
+		if (levelScene.getMarioStatus() < marioFirstMode)
+		{
+			System.out.println("STATUS CHANGE");
+			reward = reward * 0.5f;
+		}
+				
 		if (Util.lcaDebug)System.out.println("In calculateReward | FirstX = " + marioFirstX + ", currentX = " + levelScene.mario.x);
 		if (Util.lcaDebug)System.out.println("In calculateReward | Distance covered = " + distanceCovered);
 		

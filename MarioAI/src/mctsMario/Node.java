@@ -35,7 +35,7 @@ public class Node
 	{
 		ArrayList<boolean[]> possibleActions = new ArrayList<boolean[]>();
 		
-		possibleActions.add(createAction(false, false, false, false, false, false)); // Do nothing
+//		possibleActions.add(createAction(false, false, false, false, false, false)); // Do nothing
 		
 		possibleActions.add(createAction(false, false, false, true, false, false)); // Jump
 		
@@ -71,15 +71,6 @@ public class Node
     	action[Mario.KEY_UP] = up;
     	
     	return action;
-	}
-	
-	
-	
-	public boolean[] createInvalidAction()
-	{
-		boolean[] action = null;
-		
-		return action;
 	}
 	
 	/**
@@ -123,8 +114,6 @@ public class Node
 			{
 				s+= '\n';
 			}
-			
-			
 		}
 
 		return s;
