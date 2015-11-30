@@ -83,6 +83,10 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		if (Math.abs(clonedLevel.mario.y - realMarioPos[1]) > 0.1f)
 			clonedLevel.mario.ya = (realMarioPos[1] - lastY) * 0.85f;// + 3f;
 		clonedLevel.mario.y = realMarioPos[1];
+		
+		
+		clonedLevel.setLevelScene(cloned);
+		clonedLevel.setEnemies(enemies);
 		//update the mario mode according to the environment.
 		switch (environment.getMarioMode()) {
 		case 1:
@@ -98,8 +102,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 			clonedLevel.mario.fire = false;
 			break;
 		}
-		clonedLevel.setLevelScene(cloned);
-		clonedLevel.setEnemies(enemies);
+
 		lastX = realMarioPos[0];
 		lastY = realMarioPos[1];
 		
@@ -146,7 +149,6 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 //		}
 		// -- Lasses test agent shit END --
 		
-		
 		boolean[] newAction = mcts.search(clonedLevel);
 		
 		if (environment.getMarioStatus() == Mario.STATUS_WIN)
@@ -155,8 +157,8 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		}
 //		action = mcts.search(clonedLevel);
 		//System.out.println("Action length = " + newAction.length);
-//		for (int i = 0; i < newAction.length; ++i)
-//			newAction[i] = false;
+		for (int i = 0; i < newAction.length; ++i)
+			newAction[i] = false;
 		return newAction;
 	}
 

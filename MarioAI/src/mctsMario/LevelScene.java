@@ -159,6 +159,7 @@ public final class LevelScene implements SpriteContext, Cloneable
         		clone.add(s);
         	}
         }
+
         c.sprites = clone;
     	return c;
     }
@@ -249,8 +250,8 @@ public final class LevelScene implements SpriteContext, Cloneable
 		{
 			if (sprite != mario)
 			{
-				float xd = sprite.x - xCam+mario.x;
-				float yd = sprite.y - yCam+mario.y;
+				float xd = sprite.x - xCam;
+				float yd = sprite.y - yCam;
 				if (xd < -64 || xd > GlobalOptions.VISUAL_COMPONENT_WIDTH + 64 || yd < -64 || yd > GlobalOptions.VISUAL_COMPONENT_HEIGHT + 64)
 				{
 					removeSprite(sprite);
@@ -902,12 +903,6 @@ public final class LevelScene implements SpriteContext, Cloneable
 	public void advanceStep(boolean[] action)
 	{
 		this.mario.setKeys(action); 
-//		System.out.println("[" 
-//				+ (action[Mario.KEY_DOWN] ? "d" : "") 
-//				+ (action[Mario.KEY_RIGHT] ? "r" : "")
-//				+ (action[Mario.KEY_LEFT] ? "l" : "")
-//				+ (action[Mario.KEY_JUMP] ? "j" : "")
-//				+ (action[Mario.KEY_SPEED] ? "s" : "") + "]");
 		this.tick();
 	}
 }
