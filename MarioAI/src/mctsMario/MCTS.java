@@ -17,7 +17,7 @@ public class MCTS
 	// The minimum number of visits every node should have before it will be rated by UCT.
 	private static final int CONFIDENCE_THRESHOLD = 1;
 	
-	private static final int MAX_SIMULATION_TICKS = 3;
+	private static final int MAX_SIMULATION_TICKS = 4;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html
@@ -61,10 +61,10 @@ public class MCTS
 		Node bestChild = getBestChild(rootNode, 0);
 
 		// Return action corresponding to best child.
-		System.out.println("In main search | rootNode children: " + rootNode.childrenAsString());
-		if (true)System.out.println("In main search | Best child with parent action = " + bestChild.parentActionAsString()); // TEST/DEBUG
-		System.out.println();
-		if (Util.lcaDebug)System.out.println("In main search | bestChild.ParentAction.length = " + bestChild.parentAction.length);
+//		System.out.println("In main search | rootNode children: " + rootNode.childrenAsString());
+//		if (true)System.out.println("In main search | Best child with parent action = " + bestChild.parentActionAsString()); // TEST/DEBUG
+//		System.out.println();
+//		if (Util.lcaDebug)System.out.println("In main search | bestChild.ParentAction.length = " + bestChild.parentAction.length);
 		return bestChild.parentAction;
 	}
 	
@@ -335,8 +335,10 @@ public class MCTS
 			reward = 0;
 		}
 		// If mario shrunk (was hit by enemy without dying)
+		//System.out.println(marioFirstMode+","+levelScene.getMarioStatus());
 		if (levelScene.getMarioStatus() < marioFirstMode)
 		{
+			System.out.println("STATUS CHANGE");
 			reward = reward * 0.5f;
 		}
 				
