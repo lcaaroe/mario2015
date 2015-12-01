@@ -259,6 +259,7 @@ public final class Mario extends Sprite implements Cloneable
 
 	public void move()
 	{
+//		if (invulnerableTime != 0)System.out.println("invulnerable = " + invulnerableTime);
 		if (GlobalOptions.isFly)
 		{
 			xa = ya = 0;
