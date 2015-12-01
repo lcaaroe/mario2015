@@ -147,7 +147,7 @@ public final class Mario extends Sprite implements Cloneable
 
 	public int deathTime = 0;
 	public int winTime = 0;
-	private int invulnerableTime = 0;
+	public int invulnerableTime = 0;
 
 	public Sprite carried = null;
 	//    private static Mario instance;
@@ -730,7 +730,6 @@ public final class Mario extends Sprite implements Cloneable
 		{
 			//        levelScene.paused = true;
 			//        powerUpTime = -3 * FractionalPowerUpTime;
-			System.out.println("ouch");
 			if (fire)
 			{
 				levelScene.mario.setMode(true, false);

@@ -45,6 +45,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 {
 	private float lastX = 0;
 	private float lastY = 0;
+	private int invulnerableTime = 0;
 	
 	// -- LCA TEST
 //	private int i = 0;
@@ -156,9 +157,10 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 //			System.out.println("Babby saw the win");
 //		}
 //		action = mcts.search(clonedLevel);
-		//System.out.println("Action length = " + newAction.length);
+//		//System.out.println("Action length = " + newAction.length);
 //		for (int i = 0; i < newAction.length; ++i)
 //			newAction[i] = false;
+//		newAction[Mario.KEY_RIGHT] = true;
 		return newAction;
 	}
 
