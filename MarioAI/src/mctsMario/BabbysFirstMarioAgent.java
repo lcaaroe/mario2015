@@ -149,8 +149,11 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 //			System.out.println("FirstX = " + marioFirstX + ", currentX = " + realMarioPos[0] + ". Mario covered: " + (realMarioPos[0] - marioFirstX)+  " units.");
 //		}
 		// -- Lasses test agent shit END --
+//		System.out.println("Mario status = " + environment.getMarioStatus() + "(environment babby)");
+//		System.out.println("Mario status = " + clonedLevel.getMarioStatus() + "(clonedLevel babby)");
 		
 		boolean[] newAction = mcts.search(clonedLevel);
+//		System.out.println("Mario status = " + clonedL7evel.getMarioStatus() + "(clonedLevel babby after mcts)");
 		
 //		if (environment.getMarioStatus() == Mario.STATUS_WIN)
 //		{
@@ -161,6 +164,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 //		for (int i = 0; i < newAction.length; ++i)
 //			newAction[i] = false;
 //		newAction[Mario.KEY_RIGHT] = true;
+		
 		return newAction;
 	}
 

@@ -3,12 +3,13 @@ package mctsMario;
 import java.util.ArrayList;
 import java.util.Random;
 
+import ch.idsia.benchmark.mario.engine.MarioVisualComponent;
 import mctsMario.sprites.Mario;
 
 public class MCTS 
 {
 	// Max allowed time (in ms) to run the search. Algorithm needs a little time to select best child and exit.
-	private int timeLimit = 20;
+	private int timeLimit = 19;
 	
 	// Exploration coefficient (default ~0.707107...)
 	// "the value (...) was shown to satisfy the Hoeffding ineqality with rewards in the range [0,1]" (Browne et al., 2012)
@@ -17,7 +18,8 @@ public class MCTS
 	// The minimum number of visits every node should have before it will be rated by UCT.
 	private static final int CONFIDENCE_THRESHOLD = 1;
 	
-	private static final int MAX_SIMULATION_TICKS = 5;
+	// Number of random steps to perform when simulating in default policy.
+	private static final int MAX_SIMULATION_TICKS = 4;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html
@@ -48,8 +50,8 @@ public class MCTS
 //			long currentTime = System.currentTimeMillis(); // TEST/DEBUG
 //			System.out.println("Current time = " + currentTime + ". Time limit = " + dueTime + ". Time left = " + (dueTime - currentTime));
 
-			Node v1 = treePolicy(rootNode);
 			
+			Node v1 = treePolicy(rootNode);
 			float reward = defaultPolicy(v1, MAX_SIMULATION_TICKS);
 			
 			backpropagate(v1, reward);
@@ -61,11 +63,17 @@ public class MCTS
 		Node bestChild = getBestChild(rootNode, 0);
 
 		// Return action corresponding to best child.
-//		System.out.println("In main search | rootNode children: " + '\n' + rootNode.childrenAsString());
-		if (true)System.out.println("In main search | Best child with parent action = " + bestChild.parentActionAsString()); // TEST/DEBUG
+//		if (true) System.out.println("In main search | rootNode children: " + '\n' + rootNode.childrenAsString());
+//		if (true) System.out.println("In main search | Best child with parent action = " + actionAsString(bestChild.parentAction)); // TEST/DEBUG
 //		System.out.println();
 //		if (Util.lcaDebug)System.out.println("In main search | bestChild.ParentAction.length = " + bestChild.parentAction.length);
-		return bestChild.parentAction;
+		
+//		System.out.println("Mario status = " + levelScene.getMarioStatus() + "(mcts)");
+		
+		
+//		return bestChild.parentAction;
+
+		return rootNode.createAction(false, false, false, false, false, false);
 	}
 	
 	/**
@@ -121,21 +129,42 @@ public class MCTS
 		}catch (CloneNotSupportedException e){
 			e.printStackTrace();
 		}
+		
+		boolean marioDeadBefore = levelSceneClone.getMarioStatus() == Mario.STATUS_DEAD;
+		float marioPosBefore = levelSceneClone.getMarioFloatPos()[0];
+		
+		// Necessary? this should already happen in clone...
 		levelSceneClone.mario.invulnerableTime = v.levelScene.mario.invulnerableTime;
+		
 		// Advance the levelScene 1 tick with the new action. 
 		// This child then represents the world state after taking that action.
 		levelSceneClone.advanceStep(untriedAction);
-//		System.out.println(levelSceneClone.getEnemiesFloatPos().length);
+
+		boolean marioDeadAfter = levelSceneClone.getMarioStatus() == Mario.STATUS_DEAD;
+		float marioPosAfter = levelSceneClone.getMarioFloatPos()[0];
+		
+//		if (marioDeadAfter)
+//		{
+//			System.out.println("Mario died in EXPAND");
+//		}
+//		if (marioDeadBefore)
+//		{
+//			System.out.println("Mario is already dead before simulating | " + levelSceneClone.getMarioStatus());
+//		}
+//		if (marioPosBefore != marioPosAfter)
+//		{
+//			System.out.println("Mario moved in EXPAND");
+//		}
 		// Create new child representing the world state after performing the untried action.
 		Node child = new Node(levelSceneClone, v);
 		child.parentAction = untriedAction;
 		v.children.add(child);
 
-		// TEST/DEBUG
-//		if (child.levelScene.getMarioMode() != v.levelScene.getMarioMode())
-//		{
-//			System.out.println("in expand | mario was hit in child state");
-//		}
+//		 TEST/DEBUG
+		if (child.levelScene.getMarioMode() != v.levelScene.getMarioMode())
+		{
+			System.out.println("in expand | mario was hit in child state");
+		}
 		
 		return child;
 	}
@@ -177,40 +206,38 @@ public class MCTS
 	
 	
 	/**
-	 * Gets an untried action from Node v.
+	 * Gets a random untried action from Node v.
 	 * @param v
-	 * @return An untried action from Node v. Returns 'do-nothing' (TODO: INVALID) action if no untried actions exist.
+	 * @return An untried action from Node v. Returns null action if no untried actions exist.
 	 */
 	private boolean[] getUntriedAction(Node v)
 	{
+		ArrayList<boolean[]> untriedActions = new ArrayList<boolean[]>();
+		
 		outer:
-		for (boolean[] possibleAction : v.actions) 
+		for (boolean[] a : v.actions) 
 		{
 			for (Node child : v.children) 
 			{
-				if (child.parentAction == possibleAction)
+				if (child.parentAction == a)
 				{
 					// A child representing this action already exist, so continue to next move.
 					continue outer;
 				}
 			}
 			// No child found representing this action, so it is untried.
-			return possibleAction;
+//			return possibleAction;
+			untriedActions.add(a);
 		}
 		
-		// If no untried actions exist, return a 'do-nothing' action. (Or null action?)
-//		boolean[] action = new boolean[6];
-//		for (int i = 0; i < action.length; i++) {
-//			action[i] = false;
-//		}
+		// Return a random untried action
+		if (untriedActions.size() > 0)
+		{
+			return untriedActions.get(rng.nextInt(untriedActions.size()));
+		}
 	
-		// TEST/DEBUG - return action with up-key pressed
-		boolean[] action = null;
-//		for (int i = 0; i < action.length; i++)
-//		{
-//			
-//		}
-		return action;
+		// No untried action found so return null.
+		return null;
 	}
 	
 	
@@ -243,35 +270,24 @@ public class MCTS
 			e.printStackTrace();
 		}
 		levelSceneClone.mario.invulnerableTime = v.levelScene.mario.invulnerableTime;
-		// Get random possible action.
-		
-		ArrayList<boolean[]> actionsToSimulate = new ArrayList<boolean[]>();
-		
+
 		// Get Mario's starting x and mode (fire, large, small)
 		float firstMarioX = levelSceneClone.mario.x;
 		int firstMarioMode = levelSceneClone.getMarioMode();
 		int parentMarioMode = v.parent.levelScene.getMarioMode();
-		
-		if (firstMarioMode != parentMarioMode)
-		{
-			System.out.println("Mario was hit since parent state");
-		}
+		boolean marioDeadBefore = levelSceneClone.getMarioStatus() == Mario.STATUS_DEAD;
 		
 		
-//		System.out.println("DefaultPolicy mode BEFORE: " + marioFirstMode);
+		ArrayList<boolean[]> actionsToSimulate = new ArrayList<boolean[]>();
+		
 		// Advance levelScene using random possible actions until maxTicks budget is reached.
-		// 
 		int i = 0;
 		while (i < maxTicks)
 		{
-			boolean[] randomAction = v.actions.get(rng.nextInt(v.actions.size()));
+			i++;
+			// Get random possible action.
+			boolean[] randomAction = v.getRandomAction();
 			actionsToSimulate.add(randomAction);
-//			System.out.println("Advance with Action [" 
-//		+ (randomAction[Mario.KEY_DOWN] ? "d" : "") 
-//		+ (randomAction[Mario.KEY_RIGHT] ? "r" : "")
-//		+ (randomAction[Mario.KEY_LEFT] ? "l" : "")
-//		+ (randomAction[Mario.KEY_JUMP] ? "j" : "")
-//		+ (randomAction[Mario.KEY_SPEED] ? "s" : "") + "]");
 			levelSceneClone.advanceStep(randomAction);
 			
 			// If game state is terminal after ticking, break out.
@@ -279,29 +295,46 @@ public class MCTS
 			{
 				break;
 			}
-			i++;
 		}
 		
+		// TEST/DEBUG: Check if Mario dies or loses Mode after simulating.
+//		boolean marioDeadAfter = levelSceneClone.getMarioStatus() == Mario.STATUS_DEAD;
 		
+//		if (marioDeadBefore != marioDeadAfter)
+//		{
+////			System.out.println("Mario died while simulating in DEFAULT");
+//		}
+
+		
+		//TEST/DEBUG
+//		if (firstMarioMode != parentMarioMode)
+//		{
+//			System.out.println("Mario changed MODE since parent state in DEFAULT");
+//		}
 //		System.out.println("parent, first, current = " + parentMarioMode + "," + firstMarioMode + "," + levelSceneClone.getMarioMode());
 		
-//		System.out.println("DefaultPolicy mode after " + i + " ticks: " + levelSceneClone.getMarioMode());
-			
-		// Get reward for current state.
-		float reward = calculateReward(levelSceneClone, firstMarioX, firstMarioMode, i);
+//		System.out.println("DefaultPolicy mode after " + (i+1) + " ticks: " + levelSceneClone.getMarioMode());
 		
-		String actionsSimulated = "";
-		for (boolean[] a : actionsToSimulate) {
-			actionsSimulated += ("[" 
-					+ (a[Mario.KEY_DOWN] ? "d" : "") 
-					+ (a[Mario.KEY_RIGHT] ? "r" : "")
-					+ (a[Mario.KEY_LEFT] ? "l" : "")
-					+ (a[Mario.KEY_JUMP] ? "j" : "")
-					+ (a[Mario.KEY_SPEED] ? "s" : "") + "]");
-		}
-		if (Util.lcaDebug) System.out.println("In defaultPolicy | After simulating " + actionsSimulated + ". Reward = " + reward); //TEST/DEBUG
+		// Get reward for current state.
+		float reward = calculateReward(levelSceneClone, firstMarioX, firstMarioMode, i, actionsToSimulate);
+		
+		//TEST/DEBUG - check Mario's and enemies' positions after step
+//		for (int j = 0; j < levelSceneClone.getEnemiesFloatPos().length; j += 3) {
+//			System.out.println("Simulated Enemy at: " + levelSceneClone.getEnemiesFloatPos()[j+1] 
+//					+ " , " + levelSceneClone.getEnemiesFloatPos()[j+2]);
+//		}
+//		System.out.println("Simulated Mario at: " + levelSceneClone.getMarioFloatPos()[0]
+//				+ " , " + levelSceneClone.getMarioFloatPos()[1]);
+		//TEST/DEBUG
+//		String actionsSimulated = "";
+//		for (boolean[] a : actionsToSimulate){
+//			actionsSimulated += actionAsString(a);}
+//		if (true) System.out.println("In defaultPolicy | After simulating " + i + " steps after action " 
+//		+ actionAsString(v.parentAction) + ": " + actionsSimulated + ". Reward = " + reward); //TEST/DEBUG
 		return reward;
 	}
+	
+
 	
 //	/**
 //	 * Checks if Mario has been hit by an enemy between the two given states.
@@ -322,10 +355,6 @@ public class MCTS
 	/**
 	 * Checks the current state of Mario in the given LevelScene, and calculates the reward based on the state.
 	 * Mario is currently rewarded for running to the right and winning.
-	 * TODO: How to punish running backwards?
-	 * TODO: Consider reducing impact of distance achieved. (So running full distance to the right is not awarded
-	 * the same as actually winning the level.)
-	 * TODO: Consider adding Death/shrinking as just a multiplier to distance achieved.
 	 * TODO: Consider punishment for mario shrinking (i.e. hitting enemies without dying)
 	 * TODO: Consider checking gaps and punish jumping to a gap.
 	 * TODO: Is it viable to always assume that max number of units moved is 11? Obviously this only holds for unobstructed
@@ -334,20 +363,28 @@ public class MCTS
 	 * @param ticksSimulated How many ticks were simulated in default policy before terminating.
 	 * @return The reward for the current state.
 	 */
-	private float calculateReward(LevelScene levelScene, float marioFirstX, int marioFirstMode, int ticksSimulated)
+	private float calculateReward(LevelScene levelScene, float marioFirstX, int marioFirstMode, int ticksSimulated, ArrayList<boolean[]> actionsSimulated)
 	{
 		// If Mario is dead
 		if (levelScene.getMarioStatus() == Mario.STATUS_DEAD)
 		{
-//			System.out.println("DEAD in simulation");
-//			System.out.println("--------");
+			return 0;
+		}
+		// If Mario was hit without dying
+		if (levelScene.getMarioMode() < marioFirstMode)
+		{
+			System.out.println("Mario Mode change in CALCULATEREWARD. | InvulnerableTime = " + levelScene.mario.invulnerableTime);
+			String actionsSimulatedString = "";
+			for (boolean[] a : actionsSimulated){
+				actionsSimulatedString += actionAsString(a);}
+			if (true) System.out.println("In defaultPolicy | After simulating " + ticksSimulated + " steps"
+					 + ": " + actionsSimulatedString + ". Reward = " + 0);
 			return 0;
 		}
 		// If mario completed the level
 		if (levelScene.getMarioStatus() == Mario.STATUS_WIN)
 		{
-			
-//			System.out.println("WON in simulation");
+			System.out.println("WON in simulation");
 			return 1;
 		}
 		/* If simulation terminated before reaching terminal state, we approximate the reward.
@@ -356,26 +393,20 @@ public class MCTS
 		 */
 		float distanceCovered = levelScene.mario.x - marioFirstX;
 		float reward = 0;
-		if (distanceCovered > 0)
+		if (distanceCovered >= 0)
 		{
-			reward = 0.5f + (distanceCovered/(11*ticksSimulated));
+			// Minimum reward is 0.1f so going left is never more desirable than going right unless it's to avoid death.
+			reward = 0.1f + (distanceCovered/(11*ticksSimulated));
 		}
 		else
 		{
-			// If Mario has not made any progress to the right, there is no reward.
-			reward = 0;
-		}
-		// If mario shrunk (was hit by enemy without dying)
-		//System.out.println(marioFirstMode+","+levelScene.getMarioStatus());
-//		System.out.println("levelScene.getMarioMode, marioFirstNode = " + levelScene.getMarioMode() + "," + marioFirstMode);
-		if (levelScene.getMarioMode() < marioFirstMode)
-		{
-			System.out.println("STATUS CHANGE");
-			reward = reward * 0.5f;
+			// If Mario has not made any progress to the right, reward is small.
+			reward = 0.1f;
 		}
 				
 		if (Util.lcaDebug)System.out.println("In calculateReward | FirstX = " + marioFirstX + ", currentX = " + levelScene.mario.x);
 		if (Util.lcaDebug)System.out.println("In calculateReward | Distance covered = " + distanceCovered);
+//		System.out.println();
 		
 		return reward;
 	}
@@ -449,9 +480,26 @@ public class MCTS
 		float valueTerm = n.reward/n.timesVisited;
 		
 		// Gives higher value for less visited nodes.
-		float explorationTerm = (float) Math.sqrt((2 * Math.log(n.parent.timesVisited))/n.timesVisited);
+		float explorationTerm = c * ((float) Math.sqrt((2 * Math.log(n.parent.timesVisited))/n.timesVisited));
 		
 		
-		return valueTerm + c * explorationTerm + (rng.nextFloat() * tieBreaker);
+		return valueTerm + explorationTerm + (rng.nextFloat() * tieBreaker);
+	}
+	
+	/**
+	 * @param a
+	 * @return Action a as string in the format [drljsu]
+	 */
+	private String actionAsString(boolean[] a)
+	{
+		String s = "[" 
+			+ (a[Mario.KEY_LEFT] ? "l" : "")
+			+ (a[Mario.KEY_RIGHT] ? "r" : "")
+			+ (a[Mario.KEY_DOWN] ? "d" : "") 
+			+ (a[Mario.KEY_JUMP] ? "j" : "")
+			+ (a[Mario.KEY_SPEED] ? "s" : "")
+			+ (a[Mario.KEY_UP] ? "u" : "") + "]";
+			
+		return s;
 	}
 }
