@@ -130,19 +130,50 @@ public class MCTS
 			e.printStackTrace();
 		}
 		
-		boolean marioDeadBefore = levelSceneClone.getMarioStatus() == Mario.STATUS_DEAD;
-		float marioPosBefore = levelSceneClone.getMarioFloatPos()[0];
+		// Create new child representing the world state after performing the untried action.
+		Node child = new Node(levelSceneClone, v);
+		child.parentAction = untriedAction;
+		v.children.add(child);
 		
-		// Necessary? this should already happen in clone...
-		levelSceneClone.mario.invulnerableTime = v.levelScene.mario.invulnerableTime;
+		// Necessary? this should already happen when cloning the levelscene...
+		child.levelScene.mario.invulnerableTime = v.levelScene.mario.invulnerableTime;
 		
+		// This should be equal to parent since its fresh from the clone
+		int marioModeBefore = child.levelScene.getMarioMode();
+
+		if (marioModeBefore != v.levelScene.getMarioMode())
+		{
+			// Should not trigger, since child Mode (and therefore marioModeBefore) is still an exact copy of parent Mode
+			System.out.println("parent Mode != marioModeBefore");
+		}
+		if (marioModeBefore != child.levelScene.getMarioMode())
+		{
+			// Should not trigger, since marioModeBefore has the value of child Mode
+			System.out.println("child Mode != marioModeBefore");
+		}
+
+
 		// Advance the levelScene 1 tick with the new action. 
 		// This child then represents the world state after taking that action.
-		levelSceneClone.advanceStep(untriedAction);
+		child.levelScene.advanceStep(untriedAction);
 
-		boolean marioDeadAfter = levelSceneClone.getMarioStatus() == Mario.STATUS_DEAD;
-		float marioPosAfter = levelSceneClone.getMarioFloatPos()[0];
-		
+		if (marioModeBefore != v.levelScene.getMarioMode())
+		{
+			// Should not trigger, since neither parent nor marioModeBefore should be affected by child tick
+			System.out.println("### After tick ### parent Mode (" + v.levelScene.getMarioMode()+")"
+					+ "!= marioModeBefore (" + marioModeBefore + ")");
+		}
+		if (child.levelScene.getMarioMode() != marioModeBefore)
+		{
+			// Should trigger! Because child was ticked and marioModeBefore never changes.
+			System.out.println("--- After tick --- child Mode ("+child.levelScene.getMarioMode()+")" 
+		+ " != marioModeBefore (" + marioModeBefore + ")");
+		}
+
+		if (marioModeBefore > child.levelScene.getMarioMode())
+		{
+			System.out.println("expand | Mario changed mode after tick" );
+		}
 //		if (marioDeadAfter)
 //		{
 //			System.out.println("Mario died in EXPAND");
@@ -155,15 +186,12 @@ public class MCTS
 //		{
 //			System.out.println("Mario moved in EXPAND");
 //		}
-		// Create new child representing the world state after performing the untried action.
-		Node child = new Node(levelSceneClone, v);
-		child.parentAction = untriedAction;
-		v.children.add(child);
+		
 
 //		 TEST/DEBUG
 		if (child.levelScene.getMarioMode() != v.levelScene.getMarioMode())
 		{
-			System.out.println("in expand | mario was hit in child state");
+			System.out.println("in expand | Mario was hit since parent");
 		}
 		
 		return child;
