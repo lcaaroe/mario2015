@@ -175,6 +175,13 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 //		System.out.println("Mario status = " + environment.getMarioStatus() + "(environment babby)");
 //		System.out.println("Mario status = " + clonedLevel.getMarioStatus() + "(clonedLevel babby)");
 		
+		System.out.println("gapStartX = " + clonedLevel.gapStartX + ", gapEndX = " + clonedLevel.gapEndX
+				+ ", gapY = " + clonedLevel.gapY + ", marioPosY = " + clonedLevel.getMarioFloatPos()[1]);
+		if (clonedLevel.gapY <= 1 && clonedLevel.gapStartX <= 0)//&& clonedLevel.gapStartX == 0 && clonedLevel.gapEndX)
+		{
+			System.out.println("IN GAP");
+		}
+		
 		boolean[] newAction = mcts.search(clonedLevel);
 //		System.out.println("Mario status = " + clonedL7evel.getMarioStatus() + "(clonedLevel babby after mcts)");
 		

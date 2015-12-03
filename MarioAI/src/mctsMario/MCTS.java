@@ -56,7 +56,7 @@ public class MCTS
 			
 			backpropagateMax(v1, reward);
 		}
-		System.out.println("TIME'S UP");
+//		System.out.println("TIME'S UP");
 		//TEST/DEBUG
 //		System.out.println("Root statistics after backprop: Reward = " + rootNode.reward + " Times visited = " + rootNode.timesVisited);
 		
@@ -65,15 +65,15 @@ public class MCTS
 		Node mostVisitedChild = getMostVisitedChild(rootNode);
 
 		// Return action corresponding to best child.
-		if (true) System.out.println("In main search | rootNode children: " + '\n' + rootNode.childrenAsString());
-		if (true) System.out.println("In main search | Best child with parent action = " + actionAsString(bestChild.parentAction)); // TEST/DEBUG
+//		if (true) System.out.println("In main search | rootNode children: " + '\n' + rootNode.childrenAsString());
+//		if (true) System.out.println("In main search | Best child with parent action = " + actionAsString(bestChild.parentAction)); // TEST/DEBUG
 //		System.out.println();
 //		if (Util.lcaDebug)System.out.println("In main search | bestChild.ParentAction.length = " + bestChild.parentAction.length);
 		
 		
 		
-//		return bestChild.parentAction;
-		return mostVisitedChild.parentAction;
+		return bestChild.parentAction;
+//		return mostVisitedChild.parentAction;
 //		return rootNode.createAction(false, false, false, false, false, false);
 	}
 	
@@ -404,12 +404,14 @@ public class MCTS
 	 */
 	private float calculateReward(LevelScene levelScene, float marioFirstX, int marioFirstMode, int ticksSimulated, ArrayList<boolean[]> actionsSimulated)
 	{
-		// If Mario is dead
-		if (levelScene.gapStartX - (int)levelScene.getMarioFloatPos()[0]/16 >= 0
-				&& levelScene.gapEndX - (int)levelScene.getMarioFloatPos()[0]/16 < 3) //Assuming gaps are 3 wide
-		{
-			
-		}
+		// If Mario is going into a gap, reward 0.
+//		if (levelScene.gapStartX - (int)levelScene.getMarioFloatPos()[0]/16 >= 0
+//				&& levelScene.gapEndX - (int)levelScene.getMarioFloatPos()[0]/16 <= levelScene.gapEndX-levelScene.gapEndX //Assuming gaps are 3 wide
+//				&& levelScene.gapY > 0)
+//		{
+//			System.out.println("IN GAP");
+//		}
+		// If Mario died, reward 0.
 		if (levelScene.getMarioStatus() == Mario.STATUS_DEAD)
 		{
 //			System.out.println("Mario dead in simulation");

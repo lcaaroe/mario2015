@@ -444,8 +444,8 @@ public final class LevelScene implements SpriteContext, Cloneable
 				}
 			}
 		}
-		if(gapStartX != -1)
-			System.out.println("GAP IS HERE: "+gapStartX+","+gapEndX+","+gapY);
+//		if(gapStartX != -1)
+//			System.out.println("GAP IS HERE: "+gapStartX+","+gapEndX+","+gapY);
 		//    int HalfObsWidth = 11;
 		//    int HalfObsHeight = 11;
 		//    int MarioXInMap = (int)mario.x/16;
