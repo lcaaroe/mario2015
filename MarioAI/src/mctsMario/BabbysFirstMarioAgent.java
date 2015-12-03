@@ -46,6 +46,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 	private float lastX = 0;
 	private float lastY = 0;
 	private int invulnerableTime = 0;
+	private int prevMarioState = 0;
 	
 	// -- LCA TEST
 //	private int i = 0;
@@ -103,7 +104,18 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 			clonedLevel.mario.fire = false;
 			break;
 		}
+		
+		if(environment.getMarioMode() != prevMarioState)
+		{
+			System.out.println("Lost health during last aciton");
+			invulnerableTime = 32;
+		}
 
+		if(invulnerableTime > 0)
+		{
+			clonedLevel.mario.invulnerableTime = invulnerableTime;
+			invulnerableTime--;
+		}
 		lastX = realMarioPos[0];
 		lastY = realMarioPos[1];
 		
@@ -165,6 +177,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 //			newAction[i] = false;
 //		newAction[Mario.KEY_RIGHT] = true;
 		
+		prevMarioState = environment.getMarioMode();
 		return newAction;
 	}
 
@@ -173,6 +186,8 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 	{
 		for (int i = 0; i < action.length; ++i)
 			action[i] = false;
+		
+		prevMarioState = 2;
 //		action[Mario.KEY_RIGHT] = true;
 //	    action[Mario.KEY_SPEED] = true;
 	}
