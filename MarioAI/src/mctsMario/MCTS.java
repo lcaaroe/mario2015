@@ -13,13 +13,13 @@ public class MCTS
 	
 	// Exploration coefficient (default ~0.707107...)
 	// "the value (...) was shown to satisfy the Hoeffding ineqality with rewards in the range [0,1]" (Browne et al., 2012)
-	private static final float C = 0.2f;//(float) (1.0/Math.sqrt(2));
+	private static final float C = 0.1f;//(float) (1.0/Math.sqrt(2));
 	
 	// The minimum number of visits every node should have before it will be rated by UCT.
 	private static final int CONFIDENCE_THRESHOLD = 1;
 	
 	// Number of random steps to perform when simulating in default policy.
-	private static final int MAX_SIMULATION_TICKS = 5;
+	private static final int MAX_SIMULATION_TICKS = 2;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html
