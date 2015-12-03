@@ -423,7 +423,7 @@ public final class LevelScene implements SpriteContext, Cloneable
 				
 				if(gapStartX == -1)
 				{
-					gapStartX = x;
+					gapStartX = x-HalfObsWidth;
 				}
 				
 				if(gapEndX == -1)
@@ -436,7 +436,7 @@ public final class LevelScene implements SpriteContext, Cloneable
 				}
 				if(gapEndFound)
 				{
-					gapEndX = x;
+					gapEndX = x-HalfObsWidth;
 					if(gapEndX == -9 && gapStartX != -9)
 						gapEndX = gapStartX+2;
 						
