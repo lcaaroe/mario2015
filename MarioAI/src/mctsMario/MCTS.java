@@ -306,7 +306,7 @@ public class MCTS
 		
 		
 		ArrayList<boolean[]> actionsToSimulate = new ArrayList<boolean[]>();
-		if(true)System.out.println("- - defaultPolicy | Ticking "+maxTicks+" times on clone of "+ v.levelScene);
+//		if(true)System.out.println("- - defaultPolicy | Ticking "+maxTicks+" times on clone of "+ v.levelScene);
 		// Advance levelScene using random possible actions until maxTicks budget is reached.
 		int i = 0;
 		while (i < maxTicks)

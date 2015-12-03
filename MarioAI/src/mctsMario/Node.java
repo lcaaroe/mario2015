@@ -20,11 +20,6 @@ public class Node
 	
 	private Random rng = new Random();
 	
-	
-	// TEST
-	public Node firstParent = null;
-	
-	
 	public Node(LevelScene levelScene, Node parent)
 	{
 		this.levelScene = levelScene;
@@ -141,20 +136,18 @@ public class Node
 		ArrayList<boolean[]> possibleActions = new ArrayList<boolean[]>();
 		
 		possibleActions.add(createAction(false, false, false, false, false, false)); // Do nothing
-
-//		possibleActions.add(createAction(false, false, true, false, false, false)); // Down
-//		
-//		possibleActions.add(createAction(false, false, false, true, false, false)); // Jump
-////		
-//		possibleActions.add(createAction(false, true, false, false, false, false)); // Right
-//		possibleActions.add(createAction(false, true, false, false, true, false)); // Right + run
-//		possibleActions.add(createAction(false, true, false, true, false, false)); // Right + jump
-//		possibleActions.add(createAction(false, true, false, true, true, false)); // Right + jump + run
-////		
-//		possibleActions.add(createAction(true, false, false, false, false, false)); // Left
-//		possibleActions.add(createAction(true, false, false, false, true, false)); //Left + run
-//		possibleActions.add(createAction(true, false, false, true, false, false)); // Left + jump
-//		possibleActions.add(createAction(true, false, false, true, true, false)); //Left + jump + run
+		
+		possibleActions.add(createAction(false, false, false, true, false, false)); // Jump
+		
+		possibleActions.add(createAction(false, true, false, false, false, false)); // Right
+		possibleActions.add(createAction(false, true, false, false, true, false)); // Right + run
+		possibleActions.add(createAction(false, true, false, true, false, false)); // Right + jump
+		possibleActions.add(createAction(false, true, false, true, true, false)); // Right + jump + run
+		
+		possibleActions.add(createAction(true, false, false, false, false, false)); // Left
+		possibleActions.add(createAction(true, false, false, false, true, false)); //Left + run
+		possibleActions.add(createAction(true, false, false, true, false, false)); // Left + jump
+		possibleActions.add(createAction(true, false, false, true, true, false)); //Left + jump + run
 		
 		return possibleActions;
 	}

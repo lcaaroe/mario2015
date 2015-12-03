@@ -296,7 +296,6 @@ public boolean move(float xa, float ya)
     }
     if (xa > 0)
     {
-    	System.out.println(x + xa + width+","+ (y + ya - height)+","+ xa+","+ ya);
         if (isBlocking(x + xa + width, y + ya - height, xa, ya)) collide = true;
         if (isBlocking(x + xa + width, y + ya - height / 2, xa, ya)) collide = true;
         if (isBlocking(x + xa + width, y + ya, xa, ya)) collide = true;
@@ -357,7 +356,7 @@ private boolean isBlocking(float _x, float _y, float xa, float ya)
     if (x == (int) (this.x / 16) && y == (int) (this.y / 16)) return false;
     boolean blocking = levelScene.level.isBlocking(x, y, xa, ya);
 
-    byte block = levelScene.level.getBlock(x, y);
+//    byte block = levelScene.level.getBlock(x, y);
    // System.out.println(block);
     return blocking;
 }
