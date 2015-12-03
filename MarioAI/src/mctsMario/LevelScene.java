@@ -222,10 +222,10 @@ public final class LevelScene implements SpriteContext, Cloneable
 
 	public void tick()
 	{
-		float goombaX = (getEnemiesFloatPos().length > 0) ? getEnemiesFloatPos()[1] : -1;
-		float goombaY = (getEnemiesFloatPos().length > 0) ? getEnemiesFloatPos()[2] : -1;
-		System.out.println("- - - in LevelScene | ticking " + this + "mario x,y: " + mario.x +","+ mario.y
-				+ "enemy x,y: " + goombaX + "," + goombaY);
+//		float goombaX = (getEnemiesFloatPos().length > 0) ? getEnemiesFloatPos()[1] : -1;
+//		float goombaY = (getEnemiesFloatPos().length > 0) ? getEnemiesFloatPos()[2] : -1;
+//		System.out.println("- - - in LevelScene | ticking " + this + "mario x,y: " + mario.x +","+ mario.y
+//				+ "enemy x,y: " + goombaX + "," + goombaY);
 		if (GlobalOptions.isGameplayStopped)
 			return;
 
