@@ -426,12 +426,13 @@ public final class LevelScene implements SpriteContext, Cloneable
 					gapStartX = x-HalfObsWidth;
 				}
 				
-				if(gapEndX == -1)
 				if(gapY == -1)
 				{
 					for (int j = 0; j < data.length; j++) {
 						if(x > 0 && data[j][x-1] != 0 && gapY == -1)
-							gapY = j;
+						{
+							gapY = j-HalfObsHeight;
+						}
 					}
 				}
 				if(gapEndFound)
@@ -443,8 +444,8 @@ public final class LevelScene implements SpriteContext, Cloneable
 				}
 			}
 		}
-//		if(gapStartX != -1)
-//			System.out.println("GAP IS HERE: "+(gapStartX-HalfObsWidth)+","+(gapEndX-HalfObsWidth));
+		if(gapStartX != -1)
+			System.out.println("GAP IS HERE: "+gapStartX+","+gapEndX+","+gapY);
 		//    int HalfObsWidth = 11;
 		//    int HalfObsHeight = 11;
 		//    int MarioXInMap = (int)mario.x/16;
