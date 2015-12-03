@@ -9,17 +9,17 @@ import mctsMario.sprites.Mario;
 public class MCTS 
 {
 	// Max allowed time (in ms) to run the search. Algorithm needs a little time to select best child and exit.
-	private int timeLimit = 10;
+	private int timeLimit = 19;
 	
 	// Exploration coefficient (default ~0.707107...)
 	// "the value (...) was shown to satisfy the Hoeffding ineqality with rewards in the range [0,1]" (Browne et al., 2012)
-	private static final float C = (float) (1.0/Math.sqrt(2));
+	private static final float C = 0.2f;//(float) (1.0/Math.sqrt(2));
 	
 	// The minimum number of visits every node should have before it will be rated by UCT.
 	private static final int CONFIDENCE_THRESHOLD = 1;
 	
 	// Number of random steps to perform when simulating in default policy.
-	private static final int MAX_SIMULATION_TICKS = 4;
+	private static final int MAX_SIMULATION_TICKS = 5;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html
@@ -56,22 +56,25 @@ public class MCTS
 			
 			backpropagate(v1, reward);
 		}
+		System.out.println("TIME'S UP");
 		//TEST/DEBUG
 //		System.out.println("Root statistics after backprop: Reward = " + rootNode.reward + " Times visited = " + rootNode.timesVisited);
 		
 		// Get child with the highest reward (by using value of 0 for C).
 		Node bestChild = getBestChild(rootNode, 0);
+		Node mostVisitedChild = getMostVisitedChild(rootNode);
 
 		// Return action corresponding to best child.
-//		if (true) System.out.println("In main search | rootNode children: " + '\n' + rootNode.childrenAsString());
-//		if (true) System.out.println("In main search | Best child with parent action = " + actionAsString(bestChild.parentAction)); // TEST/DEBUG
+		if (true) System.out.println("In main search | rootNode children: " + '\n' + rootNode.childrenAsString());
+		if (true) System.out.println("In main search | Best child with parent action = " + actionAsString(bestChild.parentAction)); // TEST/DEBUG
 //		System.out.println();
 //		if (Util.lcaDebug)System.out.println("In main search | bestChild.ParentAction.length = " + bestChild.parentAction.length);
 		
 		
 		
 //		return bestChild.parentAction;
-		return rootNode.createAction(false, false, false, false, false, false);
+		return mostVisitedChild.parentAction;
+//		return rootNode.createAction(false, false, false, false, false, false);
 	}
 	
 	/**
@@ -134,6 +137,11 @@ public class MCTS
 		child.parentAction = untriedAction;
 		v.children.add(child);
 		
+		if (true)
+		{
+//			if (true)System.out.println("- expand | v level, child level = " + v.levelScene + "," +  child.levelScene);
+		}
+		
 		// Necessary? this should already happen when cloning the levelscene...
 		child.levelScene.mario.invulnerableTime = v.levelScene.mario.invulnerableTime;
 		
@@ -158,15 +166,15 @@ public class MCTS
 
 		if (marioModeBefore != v.levelScene.getMarioMode())
 		{
-			// Should not trigger, since neither parent nor marioModeBefore should be affected by child tick
-//			System.out.println("### After tick ### parent Mode (" + v.levelScene.getMarioMode()+")"
-//					+ "!= marioModeBefore (" + marioModeBefore + ")");
+//			 Should not trigger, since neither parent nor marioModeBefore should be affected by child tick
+			System.out.println("### After tick ### parent Mode (" + v.levelScene.getMarioMode()+")"
+					+ "!= marioModeBefore (" + marioModeBefore + ")");
 		}
 		if (child.levelScene.getMarioMode() != marioModeBefore)
 		{
-			// Should trigger! Because child was ticked and marioModeBefore never changes.
-//			System.out.println("--- After tick --- child Mode ("+child.levelScene.getMarioMode()+")" 
-//		+ " != marioModeBefore (" + marioModeBefore + ")");
+//			 Should trigger! Because child was ticked and marioModeBefore never changes.
+			System.out.println("--- After tick --- child Mode ("+child.levelScene.getMarioMode()+")" 
+		+ " != marioModeBefore (" + marioModeBefore + ")");
 		}
 
 		if (marioModeBefore > child.levelScene.getMarioMode())
@@ -307,6 +315,9 @@ public class MCTS
 		
 		ArrayList<boolean[]> actionsToSimulate = new ArrayList<boolean[]>();
 //		if(true)System.out.println("- - defaultPolicy | Ticking "+maxTicks+" times on clone of "+ v.levelScene);
+
+		
+		float marioPosBefore = levelSceneClone.getMarioFloatPos()[0];
 		// Advance levelScene using random possible actions until maxTicks budget is reached.
 		int i = 0;
 		while (i < maxTicks)
@@ -323,6 +334,9 @@ public class MCTS
 				break;
 			}
 		}
+		float distanceCovered = levelSceneClone.getMarioFloatPos()[0] - marioPosBefore;
+//		System.out.println("Distance covered simulating " + i + " ticks: " + distanceCovered
+//		+ " leading to reward of " + (0.1f + 0.2f*(distanceCovered/(11*i))));
 		
 		// TEST/DEBUG: Check if Mario dies or loses Mode after simulating.
 //		boolean marioDeadAfter = levelSceneClone.getMarioStatus() == Mario.STATUS_DEAD;
@@ -382,8 +396,6 @@ public class MCTS
 	/**
 	 * Checks the current state of Mario in the given LevelScene, and calculates the reward based on the state.
 	 * Mario is currently rewarded for running to the right and winning.
-	 * TODO: Consider punishment for mario shrinking (i.e. hitting enemies without dying)
-	 * TODO: Consider checking gaps and punish jumping to a gap.
 	 * TODO: Is it viable to always assume that max number of units moved is 11? Obviously this only holds for unobstructed
 	 * parts of the level.
 	 * @param levelScene
@@ -395,15 +407,16 @@ public class MCTS
 		// If Mario is dead
 		if (levelScene.getMarioStatus() == Mario.STATUS_DEAD)
 		{
+//			System.out.println("Mario dead in simulation");
 			return 0;
 		}
 		// If Mario was hit without dying
 		if (levelScene.getMarioMode() < marioFirstMode)
 		{
 //			System.out.println("Mario Mode change in CALCULATEREWARD. | InvulnerableTime = " + levelScene.mario.invulnerableTime);
-			String actionsSimulatedString = "";
-			for (boolean[] a : actionsSimulated){
-				actionsSimulatedString += actionAsString(a);}
+//			String actionsSimulatedString = "";
+//			for (boolean[] a : actionsSimulated){
+//				actionsSimulatedString += actionAsString(a);}
 //			if (true) System.out.println("In defaultPolicy | After simulating " + ticksSimulated + " steps"
 //					 + ": " + actionsSimulatedString + ". Reward = " + 0);
 			return 0;
@@ -423,7 +436,7 @@ public class MCTS
 		if (distanceCovered >= 0)
 		{
 			// Minimum reward is 0.1f so going left is never more desirable than going right unless it's to avoid death.
-			reward = 0.1f + (distanceCovered/(11*ticksSimulated));
+			reward = 0.1f + 0.2f*(distanceCovered/(11*ticksSimulated));
 		}
 		else
 		{
@@ -486,6 +499,29 @@ public class MCTS
 		
 		// return best child.
 		return bestChild;
+	}
+	
+	/**
+	 * Gets the child with the highest visit count.
+	 * @param v
+	 * @param c Exploration coefficient
+	 * @return The child of v with the highest visit count.
+	 */
+	private Node getMostVisitedChild(Node v)
+	{
+		Node mostVisitedChild = null;
+
+		// Find the child with the highest UCT value.
+		int maxVisits = 0;
+		for (Node child : v.children)
+		{
+			if (child.timesVisited > maxVisits)
+			{
+				maxVisits = child.timesVisited;
+				mostVisitedChild = child;
+			}
+		}
+		return mostVisitedChild;
 	}
 	
 	/**
