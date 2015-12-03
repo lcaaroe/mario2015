@@ -403,8 +403,9 @@ public final class LevelScene implements SpriteContext, Cloneable
 			}
 		}
 		
-		gapStartX = -1;
-		gapY = -1;
+		gapStartX = Integer.MIN_VALUE;
+		gapEndX = Integer.MIN_VALUE;
+		gapY = Integer.MIN_VALUE;
 		for (int x = 0; x < data[data.length-1].length; x++) {
 			boolean gapFinder = true;
 			boolean gapEndFound = false;
@@ -421,15 +422,15 @@ public final class LevelScene implements SpriteContext, Cloneable
 			if(gapFinder)
 			{
 				
-				if(gapStartX == -1)
+				if(gapStartX == Integer.MIN_VALUE)
 				{
 					gapStartX = x-HalfObsWidth;
 				}
 				
-				if(gapY == -1)
+				if(gapY == Integer.MIN_VALUE)
 				{
 					for (int j = 0; j < data.length; j++) {
-						if(x > 0 && data[j][x-1] != 0 && gapY == -1)
+						if(x > 0 && data[j][x-1] != 0 && gapY == Integer.MIN_VALUE)
 						{
 							gapY = j-HalfObsHeight;
 						}
@@ -444,7 +445,7 @@ public final class LevelScene implements SpriteContext, Cloneable
 				}
 			}
 		}
-		if(gapStartX != -1)
+		if(gapStartX != Integer.MIN_VALUE)
 			System.out.println("GAP IS HERE: "+gapStartX+","+gapEndX+","+gapY);
 		//    int HalfObsWidth = 11;
 		//    int HalfObsHeight = 11;
