@@ -16,20 +16,18 @@ public class MCTS
 	private static final float C = (float) (1.0/Math.sqrt(2));
 	
 	// The minimum number of visits every node should have before it will be rated by UCT.
-	private static final int CONFIDENCE_THRESHOLD = 2;
+	private static final int CONFIDENCE_THRESHOLD = 1;
 	
 	// Number of random steps to perform when simulating in default policy.
-	private static final int MAX_SIMULATION_TICKS = 6;
+	private static final int MAX_SIMULATION_TICKS = 10;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html
 	private Random rng = new Random();
 	private float tieBreaker = (float)1e-6;
-	
-	
-	// TEST/DEBUG FIELDS
 	int treePolicyCounter = 0;
 	
+	private boolean spam = false;
 	
 	/**
 	 * 
@@ -39,7 +37,11 @@ public class MCTS
 	public boolean[] search(LevelScene levelScene)
 	{
 		Node rootNode = new Node(levelScene, null);
+		
+		// TEST/DEBUG FIELDS
+		treePolicyCounter = 0;
 		int searchCounter = 0;
+		
 		
 		long dueTime = System.currentTimeMillis() + timeLimit;
 		while (System.currentTimeMillis() < dueTime)
@@ -56,6 +58,7 @@ public class MCTS
 			
 			backpropagate(v1, reward);
 		}
+		if (spam) System.out.println("TIME'S UP");
 		//TEST/DEBUG
 //		System.out.println("Root statistics after backprop: Reward = " + rootNode.reward + " Times visited = " + rootNode.timesVisited);
 		
@@ -67,8 +70,6 @@ public class MCTS
 //		if (true) System.out.println("In main search | Best child with parent action = " + actionAsString(bestChild.parentAction)); // TEST/DEBUG
 //		System.out.println();
 //		if (Util.lcaDebug)System.out.println("In main search | bestChild.ParentAction.length = " + bestChild.parentAction.length);
-		
-//		System.out.println("Mario status = " + levelScene.getMarioStatus() + "(mcts)");
 		
 		
 		return bestChild.parentAction;
@@ -83,8 +84,9 @@ public class MCTS
 	 */
 	private Node treePolicy(Node v)
 	{
-//		treePolicyCounter++; // TEST/DEBUG
-//		System.out.println("TreePolicy counter = " + treePolicyCounter); // TEST/DEBUG
+		treePolicyCounter++; // TEST/DEBUG
+		if (spam) System.out.println("TreePolicy counter = " + treePolicyCounter); // TEST/DEBUG
+		if (spam) System.out.println("treePolicy | v = " + v);
 //		while (!isTerminalState(v.levelScene))
 		int i = 0;
 		while (i < 1000) // Arbitrary limit at the moment
@@ -92,7 +94,7 @@ public class MCTS
 			i++;
 			if (i==1000) // TEST/DEBUG
 			{
-				System.out.println("treepol limit reached");
+				System.out.println("warning: treepol limit reached");
 			}
 			// if v is not fully expanded, find and add new child.
 			if (!isNodeFullyExpanded(v))
@@ -135,8 +137,10 @@ public class MCTS
 		child.parentAction = untriedAction;
 		v.children.add(child);
 		
-		System.out.println("Parent level, child level, clone level = " 
-		+ v.levelScene + "," + child.levelScene + "," + levelSceneClone);
+		if (true)
+		{
+			if (spam)System.out.println("- expand | v level, child level = " + v.levelScene + "," + "," +  child.levelScene);
+		}
 		
 		// Necessary? this should already happen when cloning the levelscene...
 		child.levelScene.mario.invulnerableTime = v.levelScene.mario.invulnerableTime;
@@ -164,33 +168,39 @@ public class MCTS
 		// Advance the levelScene 1 tick with the new action. 
 		// This child then represents the world state after taking that action.
 		child.levelScene.advanceStep(untriedAction);
-
+		
 		float parentGoombaAfter = -1;
 		if (v.levelScene.getEnemiesFloatPos().length > 0)
 		{
 			parentGoombaAfter = v.levelScene.getEnemiesFloatPos()[1];
 		}
 		
+//		System.out.println("Goomba before, after = " + parentGoombaBefore + "," + parentGoombaAfter
+//				+ "\t mode before, after = " + marioModeBefore + "," + v.levelScene.getMarioMode());
 		if (parentGoombaBefore != parentGoombaAfter)
 		{
 			System.out.println("ParentGoombaBefore != ParentGoombaAfter");
 		}
-		if (marioModeBefore != child.parent.levelScene.getMarioMode())
+		if (v != child.parent)
 		{
-			// Should not trigger, since neither parent nor marioModeBefore should be affected by child tick
-			System.out.println("### After tick ### parent Mode (" + v.levelScene.getMarioMode()+")"
-					+ "!= marioModeBefore (" + marioModeBefore + ")");
+			System.out.println("v != child.parent");
 		}
-		if (child.levelScene.getMarioMode() != marioModeBefore)
-		{
-			// Should trigger! Because child was ticked and marioModeBefore never changes.
-			System.out.println("--- After tick --- child Mode ("+child.levelScene.getMarioMode()+")" 
-		+ " != marioModeBefore (" + marioModeBefore + ")");
-		}
+//		if (marioModeBefore != child.parent.levelScene.getMarioMode())
+//		{
+//			// Should never trigger, since neither parent nor marioModeBefore should be affected by child tick
+//			System.out.println("### After tick ### parent Mode (" + v.levelScene.getMarioMode()+")"
+//					+ "!= marioModeBefore (" + marioModeBefore + ")");
+//		}
+//		if (child.levelScene.getMarioMode() != marioModeBefore)
+//		{
+//			// Should trigger! Because child was ticked and marioModeBefore never changes.
+//			System.out.println("### After tick ### child Mode ("+child.levelScene.getMarioMode()+")" 
+//		+ " != marioModeBefore (" + marioModeBefore + ")");
+//		}
 
 		if (marioModeBefore > child.levelScene.getMarioMode())
 		{
-			System.out.println("expand | Mario changed mode after tick" );
+			System.out.println("- expand | Mario changed mode after tick" );
 		}
 //		if (marioDeadAfter)
 //		{
@@ -212,6 +222,7 @@ public class MCTS
 			System.out.println("in expand | Mario was hit since parent");
 		}
 		
+		if (spam) System.out.println("- expand | returning child");
 		return child;
 	}
 	
@@ -238,10 +249,18 @@ public class MCTS
 		// If action is null, no untried action exists, and node is fully expanded.
 		if (a == null)
 		{
+			if (treePolicyCounter == 1)
+			{
+				if (spam) System.out.println("isNodeFullyExpanded | in fullyexpanded - true");
+			}
 			return true;
 		}
 		else
 		{
+			if (treePolicyCounter == 1)
+			{
+				if (spam) System.out.println("isNodeFullyExpanded | in fullyexpanded - false");
+			}
 			return false;
 		}
 
@@ -315,6 +334,8 @@ public class MCTS
 		}catch (CloneNotSupportedException e){
 			e.printStackTrace();
 		}
+		
+		// Necessary?
 		levelSceneClone.mario.invulnerableTime = v.levelScene.mario.invulnerableTime;
 
 		// Get Mario's starting x and mode (fire, large, small)
@@ -328,19 +349,23 @@ public class MCTS
 		
 		// Advance levelScene using random possible actions until maxTicks budget is reached.
 		int i = 0;
+		if (true) System.out.println("- - defaultPolicy | Ticking " + maxTicks + " times on clone of " + v.levelScene);
 		while (i < maxTicks)
 		{
-			i++;
+			// If game state is terminal, break out. Check before ticking because state might have turned terminal
+			// when advancing one step in expand.
+			if (firstMarioMode > levelSceneClone.getMarioMode())
+			{
+				System.out.println("terminal state in default sim");
+				break;
+			}
+			
 			// Get random possible action.
 			boolean[] randomAction = v.getRandomAction();
 			actionsToSimulate.add(randomAction);
 			levelSceneClone.advanceStep(randomAction);
 			
-			// If game state is terminal after ticking, break out.
-			if (isTerminalState(levelSceneClone))
-			{
-				break;
-			}
+			i++;
 		}
 		
 		// TEST/DEBUG: Check if Mario dies or loses Mode after simulating.
@@ -363,7 +388,7 @@ public class MCTS
 		
 		// Get reward for current state.
 		float reward = calculateReward(levelSceneClone, firstMarioX, firstMarioMode, i, actionsToSimulate);
-		
+		if (spam) System.out.println("after calc reward");
 		//TEST/DEBUG - check Mario's and enemies' positions after step
 //		for (int j = 0; j < levelSceneClone.getEnemiesFloatPos().length; j += 3) {
 //			System.out.println("Simulated Enemy at: " + levelSceneClone.getEnemiesFloatPos()[j+1] 
@@ -423,7 +448,7 @@ public class MCTS
 			String actionsSimulatedString = "";
 			for (boolean[] a : actionsSimulated){
 				actionsSimulatedString += actionAsString(a);}
-			if (true) System.out.println("In defaultPolicy | After simulating " + ticksSimulated + " steps"
+			if (true) System.out.println("In calcReward | After simulating " + ticksSimulated + " steps"
 					 + ": " + actionsSimulatedString + ". Reward = " + 0);
 			return 0;
 		}
