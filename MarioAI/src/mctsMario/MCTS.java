@@ -68,7 +68,6 @@ public class MCTS
 //		System.out.println();
 //		if (Util.lcaDebug)System.out.println("In main search | bestChild.ParentAction.length = " + bestChild.parentAction.length);
 		
-//		System.out.println("Mario status = " + levelScene.getMarioStatus() + "(mcts)");
 		
 		
 		return bestChild.parentAction;

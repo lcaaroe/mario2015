@@ -79,6 +79,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		clonedLevel.level = new Level(1500,15);
 		clonedLevel.resetDefault();
 		
+//		System.out.println("babby | clonedLevel = " + clonedLevel);
 		clonedLevel.advanceStep(action);
 		
 		clonedLevel.mario.x = realMarioPos[0];		
