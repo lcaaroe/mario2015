@@ -37,7 +37,7 @@ public class MCTS
 	 * @return The best action found using MCTS
 	 */
 	public boolean[] search(LevelScene levelScene)
-	{
+	{	
 		Node rootNode = new Node(levelScene, null);
 		int searchCounter = 0;
 		
@@ -71,9 +71,9 @@ public class MCTS
 //		System.out.println("Mario status = " + levelScene.getMarioStatus() + "(mcts)");
 		
 		
-//		return bestChild.parentAction;
+		return bestChild.parentAction;
 
-		return rootNode.createAction(false, false, false, false, false, false);
+//		return rootNode.createAction(false, false, false, false, false, false);
 	}
 	
 	/**
@@ -119,6 +119,7 @@ public class MCTS
 	 */
 	private Node expand(Node v)
 	{
+
 		// Get untried action (assumed that Node v is not fully expanded)
 		boolean[] untriedAction = getUntriedAction(v);
 		
@@ -160,19 +161,19 @@ public class MCTS
 		if (marioModeBefore != v.levelScene.getMarioMode())
 		{
 			// Should not trigger, since neither parent nor marioModeBefore should be affected by child tick
-			System.out.println("### After tick ### parent Mode (" + v.levelScene.getMarioMode()+")"
-					+ "!= marioModeBefore (" + marioModeBefore + ")");
+//			System.out.println("### After tick ### parent Mode (" + v.levelScene.getMarioMode()+")"
+//					+ "!= marioModeBefore (" + marioModeBefore + ")");
 		}
 		if (child.levelScene.getMarioMode() != marioModeBefore)
 		{
 			// Should trigger! Because child was ticked and marioModeBefore never changes.
-			System.out.println("--- After tick --- child Mode ("+child.levelScene.getMarioMode()+")" 
-		+ " != marioModeBefore (" + marioModeBefore + ")");
+//			System.out.println("--- After tick --- child Mode ("+child.levelScene.getMarioMode()+")" 
+//		+ " != marioModeBefore (" + marioModeBefore + ")");
 		}
 
 		if (marioModeBefore > child.levelScene.getMarioMode())
 		{
-			System.out.println("expand | Mario changed mode after tick" );
+//			System.out.println("expand | Mario changed mode after tick" );
 		}
 //		if (marioDeadAfter)
 //		{
@@ -191,7 +192,7 @@ public class MCTS
 //		 TEST/DEBUG
 		if (child.levelScene.getMarioMode() != v.levelScene.getMarioMode())
 		{
-			System.out.println("in expand | Mario was hit since parent");
+//			System.out.println("in expand | Mario was hit since parent");
 		}
 		
 		return child;
@@ -401,12 +402,12 @@ public class MCTS
 		// If Mario was hit without dying
 		if (levelScene.getMarioMode() < marioFirstMode)
 		{
-			System.out.println("Mario Mode change in CALCULATEREWARD. | InvulnerableTime = " + levelScene.mario.invulnerableTime);
+//			System.out.println("Mario Mode change in CALCULATEREWARD. | InvulnerableTime = " + levelScene.mario.invulnerableTime);
 			String actionsSimulatedString = "";
 			for (boolean[] a : actionsSimulated){
 				actionsSimulatedString += actionAsString(a);}
-			if (true) System.out.println("In defaultPolicy | After simulating " + ticksSimulated + " steps"
-					 + ": " + actionsSimulatedString + ". Reward = " + 0);
+//			if (true) System.out.println("In defaultPolicy | After simulating " + ticksSimulated + " steps"
+//					 + ": " + actionsSimulatedString + ". Reward = " + 0);
 			return 0;
 		}
 		// If mario completed the level

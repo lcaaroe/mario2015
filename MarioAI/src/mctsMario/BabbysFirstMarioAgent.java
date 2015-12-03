@@ -74,6 +74,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		float[] realMarioPos = environment.getMarioFloatPos();
 
 		
+		
 		LevelScene clonedLevel  = new LevelScene();
 		clonedLevel.level = new Level(1500,15);
 		clonedLevel.resetDefault();

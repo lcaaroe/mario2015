@@ -388,19 +388,51 @@ public final class LevelScene implements SpriteContext, Cloneable
 				int correctedX = tempx+MarioXInMap;
 				int correctedY = tempy+MarioYInMap;
 				
-				if(data[x][y] != 0)
-				{
-//					System.out.println("X: "+ y+", Y:"+x);
-//					System.out.println("Corrected X: "+correctedX+", Corrected Y: "+correctedY);
-				}
 				if(correctedX >= 0 && correctedY >=0 && correctedX < level.length && correctedY < level.height)
 				{
 					level.setBlock(correctedX, correctedY, data[x][y]);
-//					System.out.println(level.map[correctedX][correctedY]);
 				}
 				
 			}
 		}
+		
+		boolean gapFound = false;
+		int gapX = -1;
+		int gapY = -1;
+		for (int i = 0; i < data[data.length-1].length; i++) {
+			String lvl = "";
+			boolean test = true;
+			for (int j = 0; j < data.length; j++) {
+				if(data[j][i] != 0)
+				{
+					test = false;
+				}
+				if(i >0)
+				{
+					if(data[j][i-1] != 0 && gapY == -1)
+					{
+						gapY = j;
+						System.out.println(gapY);
+					}
+						
+				}
+				else
+				{
+					if(data[j][i+1] != 0 && gapY == -1)
+						gapY = j;
+				}
+				lvl += data[j][i];
+			}
+			if(test)
+			{
+				gapFound = true;
+				if(gapX == -1)
+					gapX = i;
+			}
+//			System.out.println(lvl);
+		}
+		if(gapFound)
+			System.out.println("Gap Start: X: "+(gapX-HalfObsWidth)+", Y: "+ (gapY-HalfObsHeight));
 		//    int HalfObsWidth = 11;
 		//    int HalfObsHeight = 11;
 		//    int MarioXInMap = (int)mario.x/16;
