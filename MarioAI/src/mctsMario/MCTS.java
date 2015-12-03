@@ -16,10 +16,10 @@ public class MCTS
 	private static final float C = (float) (1.0/Math.sqrt(2));
 	
 	// The minimum number of visits every node should have before it will be rated by UCT.
-	private static final int CONFIDENCE_THRESHOLD = 1;
+	private static final int CONFIDENCE_THRESHOLD = 2;
 	
 	// Number of random steps to perform when simulating in default policy.
-	private static final int MAX_SIMULATION_TICKS = 4;
+	private static final int MAX_SIMULATION_TICKS = 6;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html
@@ -71,9 +71,9 @@ public class MCTS
 //		System.out.println("Mario status = " + levelScene.getMarioStatus() + "(mcts)");
 		
 		
-//		return bestChild.parentAction;
+		return bestChild.parentAction;
 
-		return rootNode.createAction(false, false, false, false, false, false);
+//		return rootNode.createAction(false, false, false, false, false, false);
 	}
 	
 	/**
@@ -135,6 +135,9 @@ public class MCTS
 		child.parentAction = untriedAction;
 		v.children.add(child);
 		
+		System.out.println("Parent level, child level, clone level = " 
+		+ v.levelScene + "," + child.levelScene + "," + levelSceneClone);
+		
 		// Necessary? this should already happen when cloning the levelscene...
 		child.levelScene.mario.invulnerableTime = v.levelScene.mario.invulnerableTime;
 		
@@ -151,13 +154,28 @@ public class MCTS
 			// Should not trigger, since marioModeBefore has the value of child Mode
 			System.out.println("child Mode != marioModeBefore");
 		}
-
-
+		
+		float parentGoombaBefore = -1;
+		if (v.levelScene.getEnemiesFloatPos().length > 0)
+		{
+			parentGoombaBefore = v.levelScene.getEnemiesFloatPos()[1];
+		}
+		
 		// Advance the levelScene 1 tick with the new action. 
 		// This child then represents the world state after taking that action.
 		child.levelScene.advanceStep(untriedAction);
 
-		if (marioModeBefore != v.levelScene.getMarioMode())
+		float parentGoombaAfter = -1;
+		if (v.levelScene.getEnemiesFloatPos().length > 0)
+		{
+			parentGoombaAfter = v.levelScene.getEnemiesFloatPos()[1];
+		}
+		
+		if (parentGoombaBefore != parentGoombaAfter)
+		{
+			System.out.println("ParentGoombaBefore != ParentGoombaAfter");
+		}
+		if (marioModeBefore != child.parent.levelScene.getMarioMode())
 		{
 			// Should not trigger, since neither parent nor marioModeBefore should be affected by child tick
 			System.out.println("### After tick ### parent Mode (" + v.levelScene.getMarioMode()+")"
@@ -447,12 +465,13 @@ public class MCTS
 	 */
 	private void backpropagate(Node v, float reward)
 	{
+		Node current = v;
 		// Update all statistics of this node and all its parents (including root even tho its pointless)
-		while (v != null)
+		while (current != null)
 		{
-			v.timesVisited++;
-			v.reward += reward;
-			v = v.parent;
+			current.timesVisited++;
+			current.reward += reward;
+			current = current.parent;
 		}
 	}
 	
