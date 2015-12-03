@@ -225,7 +225,7 @@ public final class LevelScene implements SpriteContext, Cloneable
 		float goombaX = (getEnemiesFloatPos().length > 0) ? getEnemiesFloatPos()[1] : -1;
 		float goombaY = (getEnemiesFloatPos().length > 0) ? getEnemiesFloatPos()[2] : -1;
 		System.out.println("- - - in LevelScene | ticking " + this + "mario x,y: " + mario.x +","+ mario.y
-				+ "enemy x,y: " + (int)goombaX/16 + "," + (int)goombaY/16);
+				+ "enemy x,y: " + goombaX + "," + goombaY);
 		if (GlobalOptions.isGameplayStopped)
 			return;
 
@@ -416,7 +416,7 @@ public final class LevelScene implements SpriteContext, Cloneable
 					if(data[j][i-1] != 0 && gapY == -1)
 					{
 						gapY = j;
-						System.out.println(gapY);
+//						System.out.println(gapY);
 					}
 						
 				}
@@ -435,8 +435,8 @@ public final class LevelScene implements SpriteContext, Cloneable
 			}
 //			System.out.println(lvl);
 		}
-		if(gapFound)
-			System.out.println("Gap Start: X: "+(gapX-HalfObsWidth)+", Y: "+ (gapY-HalfObsHeight));
+//		if(gapFound)
+//			System.out.println("Gap Start: X: "+(gapX-HalfObsWidth)+", Y: "+ (gapY-HalfObsHeight));
 		//    int HalfObsWidth = 11;
 		//    int HalfObsHeight = 11;
 		//    int MarioXInMap = (int)mario.x/16;

@@ -9,7 +9,7 @@ import mctsMario.sprites.Mario;
 public class MCTS 
 {
 	// Max allowed time (in ms) to run the search. Algorithm needs a little time to select best child and exit.
-	private int timeLimit = 19;
+	private int timeLimit = 10;
 	
 	// Exploration coefficient (default ~0.707107...)
 	// "the value (...) was shown to satisfy the Hoeffding ineqality with rewards in the range [0,1]" (Browne et al., 2012)
@@ -70,9 +70,8 @@ public class MCTS
 		
 		
 		
-		return bestChild.parentAction;
-
-//		return rootNode.createAction(false, false, false, false, false, false);
+//		return bestChild.parentAction;
+		return rootNode.createAction(false, false, false, false, false, false);
 	}
 	
 	/**
@@ -307,7 +306,7 @@ public class MCTS
 		
 		
 		ArrayList<boolean[]> actionsToSimulate = new ArrayList<boolean[]>();
-		
+		if(true)System.out.println("- - defaultPolicy | Ticking "+maxTicks+" times on clone of "+ v.levelScene);
 		// Advance levelScene using random possible actions until maxTicks budget is reached.
 		int i = 0;
 		while (i < maxTicks)

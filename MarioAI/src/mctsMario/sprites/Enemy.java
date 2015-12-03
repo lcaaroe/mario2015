@@ -198,7 +198,6 @@ public void move()
 
     float sideWaysSpeed = 1.75f;
     //        float sideWaysSpeed = onGround ? 2.5f : 1.2f;
-
     if (xa > 2)
         facing = 1;
     else if (xa < -2)
@@ -207,7 +206,8 @@ public void move()
     xa = facing * sideWaysSpeed;
 //    xa += facing == 1 ? -wind : wind;
 //        mayJump = (onGround);
-
+    
+    
     xFlipPic = facing == -1;
 
     runTime += (Math.abs(xa)) + 5;
@@ -219,8 +219,12 @@ public void move()
         runFrame = 1;
     }
 
-    if (!move(xa, 0)) facing = -facing;
-    onGround = false;
+//    System.out.println(xa);
+    if (!move(xa, 0)){ facing = -facing;
+    
+//    System.out.println("CHANGE DIRECTION: "+xa);
+    }
+    onGround = false; 
     move(0, ya);
 
     ya *= winged ? 0.95f : 0.85f;
@@ -292,6 +296,7 @@ public boolean move(float xa, float ya)
     }
     if (xa > 0)
     {
+    	System.out.println(x + xa + width+","+ (y + ya - height)+","+ xa+","+ ya);
         if (isBlocking(x + xa + width, y + ya - height, xa, ya)) collide = true;
         if (isBlocking(x + xa + width, y + ya - height / 2, xa, ya)) collide = true;
         if (isBlocking(x + xa + width, y + ya, xa, ya)) collide = true;
@@ -308,11 +313,12 @@ public boolean move(float xa, float ya)
         if (avoidCliffs && onGround && !levelScene.level.isBlocking((int) ((x + xa - width) / 16), (int) ((y) / 16 + 1), xa, 1))
             collide = true;
     }
-
+    
     if (collide)
     {
         if (xa < 0)
         {
+        	
             x = (int) ((x - width) / 16) * 16 + width;
             this.xa = 0;
         }
@@ -349,10 +355,10 @@ private boolean isBlocking(float _x, float _y, float xa, float ya)
     int x = (int) (_x / 16);
     int y = (int) (_y / 16);
     if (x == (int) (this.x / 16) && y == (int) (this.y / 16)) return false;
-    boolean blocking = levelScene.level.isBlocking(x, y+1, xa, ya);
+    boolean blocking = levelScene.level.isBlocking(x, y, xa, ya);
 
-//        byte block = levelScene.level.getBlock(x, y);
-    //System.out.println(blocking);
+    byte block = levelScene.level.getBlock(x, y);
+   // System.out.println(block);
     return blocking;
 }
 
