@@ -725,7 +725,6 @@ public final class Mario extends Sprite implements Cloneable
 		if (deathTime > 0 || isMarioInvulnerable) return;
 
 		if (invulnerableTime > 0) return;
-		System.out.println("IM HURT");
 		++collisionsWithCreatures;
 		levelScene.appendBonusPoints(-MarioEnvironment.IntermediateRewardsSystemOfValues.kills);
 		if (large)

@@ -13,7 +13,7 @@ public class MCTS
 	
 	// Exploration coefficient (default ~0.707107...)
 	// "the value (...) was shown to satisfy the Hoeffding ineqality with rewards in the range [0,1]" (Browne et al., 2012)
-	private static final float C = 0.1f;//(float) (1.0/Math.sqrt(2));
+	private static final float C = 0.5f;//(float) (1.0/Math.sqrt(2));
 	
 	// The minimum number of visits every node should have before it will be rated by UCT.
 	private static final int CONFIDENCE_THRESHOLD = 1;
@@ -54,7 +54,7 @@ public class MCTS
 			Node v1 = treePolicy(rootNode);
 			float reward = defaultPolicy(v1, MAX_SIMULATION_TICKS);
 			
-			backpropagate(v1, reward);
+			backpropagateMax(v1, reward);
 		}
 		System.out.println("TIME'S UP");
 		//TEST/DEBUG
@@ -315,6 +315,7 @@ public class MCTS
 		
 		ArrayList<boolean[]> actionsToSimulate = new ArrayList<boolean[]>();
 //		if(true)System.out.println("- - defaultPolicy | Ticking "+maxTicks+" times on clone of "+ v.levelScene);
+
 		
 		float marioPosBefore = levelSceneClone.getMarioFloatPos()[0];
 		// Advance levelScene using random possible actions until maxTicks budget is reached.
@@ -404,6 +405,11 @@ public class MCTS
 	private float calculateReward(LevelScene levelScene, float marioFirstX, int marioFirstMode, int ticksSimulated, ArrayList<boolean[]> actionsSimulated)
 	{
 		// If Mario is dead
+		if (levelScene.gapStartX - (int)levelScene.getMarioFloatPos()[0]/16 >= 0
+				&& levelScene.gapEndX - (int)levelScene.getMarioFloatPos()[0]/16 < 3) //Assuming gaps are 3 wide
+		{
+			
+		}
 		if (levelScene.getMarioStatus() == Mario.STATUS_DEAD)
 		{
 //			System.out.println("Mario dead in simulation");
@@ -452,17 +458,35 @@ public class MCTS
 	
 	
 	/**
-	 * Backpropagate the given reward of Node v through all its ancestors in the tree.
+	 * Backpropagate the given reward of Node v through all its ancestors in the tree. Accumulative.
 	 * @param v
 	 * @param reward
 	 */
 	private void backpropagate(Node v, float reward)
 	{
-		// Update all statistics of this node and all its parents (including root even tho its pointless)
 		while (v != null)
 		{
 			v.timesVisited++;
 			v.reward += reward;
+			v = v.parent;
+		}
+	}
+	
+	/**
+	 * Backpropagate the given reward of Node v through all its ancestors in the tree. Only stores the maximum reward.
+	 * @param v
+	 * @param reward
+	 */
+	private void backpropagateMax(Node v, float reward)
+	{
+		// Update all statistics of this node and all its parents (including root even tho its pointless)
+		while (v != null)
+		{
+			v.timesVisited++;
+			if (reward > v.reward)
+			{
+				v.reward = reward;
+			}
 			v = v.parent;
 		}
 	}
@@ -540,6 +564,7 @@ public class MCTS
 		
 		// Approximation of the node's game-theoretic value (Browne et al. 2012)
 		float valueTerm = n.reward/n.timesVisited;
+	valueTerm = n.reward;
 		
 		// Gives higher value for less visited nodes.
 		float explorationTerm = c * ((float) Math.sqrt((2 * Math.log(n.parent.timesVisited))/n.timesVisited));

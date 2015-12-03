@@ -153,6 +153,7 @@ public class Node
 	{
 		ArrayList<boolean[]> possibleActions = new ArrayList<boolean[]>();
 		
+
 //		possibleActions.add(createAction(false, false, false, false, false, false)); // Do nothing
 
 		// Useless test actions
@@ -171,6 +172,7 @@ public class Node
 //	
 		possibleActions.add(createAction(true, false, false, false, false, false)); // Left
 //		possibleActions.add(createAction(true, false, false, false, true, false)); //Left + run
+
 		possibleActions.add(createAction(true, false, false, true, false, false)); // Left + jump
 		possibleActions.add(createAction(true, false, false, true, true, false)); //Left + jump + run
 		

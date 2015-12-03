@@ -112,6 +112,9 @@ public final class LevelScene implements SpriteContext, Cloneable
 	public static int killedCreaturesByFireBall;
 	public static int killedCreaturesByStomp;
 	public static int killedCreaturesByShell;
+	public int gapStartX;
+	public int gapEndX;
+	public int gapY;
 
 	private Replayer replayer;
 
@@ -222,8 +225,8 @@ public final class LevelScene implements SpriteContext, Cloneable
 
 	public void tick()
 	{
-//		float goombaX = (getEnemiesFloatPos().length > 0) ? getEnemiesFloatPos()[1] : -1;
-//		float goombaY = (getEnemiesFloatPos().length > 0) ? getEnemiesFloatPos()[2] : -1;
+		float goombaX = (getEnemiesFloatPos().length > 0) ? getEnemiesFloatPos()[1] : -1;
+		float goombaY = (getEnemiesFloatPos().length > 0) ? getEnemiesFloatPos()[2] : -1;
 //		System.out.println("- - - in LevelScene | ticking " + this + "mario x,y: " + mario.x +","+ mario.y
 //				+ "enemy x,y: " + goombaX + "," + goombaY);
 		if (GlobalOptions.isGameplayStopped)
@@ -385,58 +388,52 @@ public final class LevelScene implements SpriteContext, Cloneable
     	//System.out.println(HalfObsWidth+","+HalfObsHeight);
 		int MarioXInMap = (int)mario.x/16;
 		int MarioYInMap = (int)mario.y/16;
-		for (int x = 0; x < data.length; x++) {
-			for (int y = 0; y < data[x].length; y++) {
-				int tempx = y-HalfObsWidth;
-				int tempy = x-HalfObsHeight;
+		for (int y = 0; y < data.length; y++) {
+			for (int x = 0; x < data[y].length; x++) {
+				int tempx = x-HalfObsWidth;
+				int tempy = y-HalfObsHeight;
 				int correctedX = tempx+MarioXInMap;
 				int correctedY = tempy+MarioYInMap;
 				
 				if(correctedX >= 0 && correctedY >=0 && correctedX < level.length && correctedY < level.height)
 				{
-					level.setBlock(correctedX, correctedY, data[x][y]);
+					level.setBlock(correctedX, correctedY, data[y][x]);
 				}
 				
 			}
 		}
 		
-		boolean gapFound = false;
-		int gapX = -1;
-		int gapY = -1;
-		for (int i = 0; i < data[data.length-1].length; i++) {
-			String lvl = "";
-			boolean test = true;
-			for (int j = 0; j < data.length; j++) {
-				if(data[j][i] != 0)
+		gapStartX = -1;
+		gapY = -1;
+		for (int x = 0; x < data[data.length-1].length; x++) {
+			boolean gapFinder = true;
+			for (int y = 0; y < data.length; y++) {
+				if(data[y][x] != 0)
 				{
-					test = false;
+					gapFinder = false;
 				}
-				if(i >0)
-				{
-					if(data[j][i-1] != 0 && gapY == -1)
-					{
-						gapY = j;
-//						System.out.println(gapY);
-					}
-						
-				}
-				else
-				{
-					if(data[j][i+1] != 0 && gapY == -1)
-						gapY = j;
-				}
-				lvl += data[j][i];
 			}
-			if(test)
+			if(gapFinder)
 			{
-				gapFound = true;
-				if(gapX == -1)
-					gapX = i;
+				if(x+2-HalfObsWidth > 0)
+				{
+					if(gapStartX == -1)
+					{
+						gapStartX = x;
+						gapEndX = x+2;
+					}
+					if(gapY == -1)
+					{
+						for (int j = 0; j < data.length; j++) {
+							if(x > 0 && data[j][x-1] != 0 && gapY == -1)
+								gapY = j;
+						}
+					}
+				}
 			}
-//			System.out.println(lvl);
 		}
-//		if(gapFound)
-//			System.out.println("Gap Start: X: "+(gapX-HalfObsWidth)+", Y: "+ (gapY-HalfObsHeight));
+		if(gapStartX != -1)
+			System.out.println(gapStartX-HalfObsWidth);
 		//    int HalfObsWidth = 11;
 		//    int HalfObsHeight = 11;
 		//    int MarioXInMap = (int)mario.x/16;
