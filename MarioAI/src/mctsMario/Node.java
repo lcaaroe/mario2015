@@ -23,6 +23,7 @@ public class Node
 	
 	// TEST
 	public Node firstParent = null;
+	public int descendants = 0;
 	
 	
 	public Node(LevelScene levelScene, Node parent)
@@ -30,7 +31,19 @@ public class Node
 		this.levelScene = levelScene;
 		this.parent = parent;
 		
+		updateDescendants();
+		
 		actions = createActions();
+	}
+	
+	private void updateDescendants()
+	{
+		Node v = this.parent;
+		while (v != null)
+		{
+			v.descendants++;
+			v = v.parent;
+		}
 	}
 	
 	/**
@@ -47,7 +60,7 @@ public class Node
 			+ ", visited: " + child.timesVisited
 			+ ", reward: " + child.reward
 			+ ", reward/visits: " + (child.reward/child.timesVisited)
-			+ ", children: " + child.children.size()
+			+ ", descendants: " + child.descendants
 			+ "]";
 			
 			// Add newline between each child.
@@ -140,21 +153,26 @@ public class Node
 	{
 		ArrayList<boolean[]> possibleActions = new ArrayList<boolean[]>();
 		
-		possibleActions.add(createAction(false, false, false, false, false, false)); // Do nothing
+//		possibleActions.add(createAction(false, false, false, false, false, false)); // Do nothing
 
+		// Useless test actions
 //		possibleActions.add(createAction(false, false, true, false, false, false)); // Down
+//		possibleActions.add(createAction(true, true, false, false, false, false)); // Right + Left
+//		possibleActions.add(createAction(false, false, false, false, false, true)); // Up
+//		possibleActions.add(createAction(false, false, false, false, true, false)); // Shoot
+		// Useless actions end
 //		
-//		possibleActions.add(createAction(false, false, false, true, false, false)); // Jump
-////		
-//		possibleActions.add(createAction(false, true, false, false, false, false)); // Right
-//		possibleActions.add(createAction(false, true, false, false, true, false)); // Right + run
-//		possibleActions.add(createAction(false, true, false, true, false, false)); // Right + jump
-//		possibleActions.add(createAction(false, true, false, true, true, false)); // Right + jump + run
-////		
-//		possibleActions.add(createAction(true, false, false, false, false, false)); // Left
+		possibleActions.add(createAction(false, false, false, true, false, false)); // Jump
+//	
+		possibleActions.add(createAction(false, true, false, false, false, false)); // Right
+		possibleActions.add(createAction(false, true, false, false, true, false)); // Right + run
+		possibleActions.add(createAction(false, true, false, true, false, false)); // Right + jump
+		possibleActions.add(createAction(false, true, false, true, true, false)); // Right + jump + run
+//	
+		possibleActions.add(createAction(true, false, false, false, false, false)); // Left
 //		possibleActions.add(createAction(true, false, false, false, true, false)); //Left + run
-//		possibleActions.add(createAction(true, false, false, true, false, false)); // Left + jump
-//		possibleActions.add(createAction(true, false, false, true, true, false)); //Left + jump + run
+		possibleActions.add(createAction(true, false, false, true, false, false)); // Left + jump
+		possibleActions.add(createAction(true, false, false, true, true, false)); //Left + jump + run
 		
 		return possibleActions;
 	}
@@ -195,4 +213,6 @@ public class Node
 		
 		return s;
 	}
+	
+	
 }
