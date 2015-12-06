@@ -126,23 +126,6 @@ public class Node
 		}
 	}
 	
-	//TEST/DEBUG
-	/**
-	 * @return
-	 */
-	public boolean[] getRightAction()
-	{
-		boolean[] action = new boolean[6];
-		
-		action[Mario.KEY_LEFT] = false;
-		action[Mario.KEY_RIGHT] = true;
-		action[Mario.KEY_DOWN] = false;
-    	action[Mario.KEY_JUMP] = false;
-    	action[Mario.KEY_SPEED] = false;
-    	action[Mario.KEY_UP] = false;
-		
-		return action;
-	}
 	
 	// -- Private methods --
 	/**
@@ -165,56 +148,29 @@ public class Node
 //		possibleActions.add(createAction(false, false, false, false, true, false)); // Shoot
 		// Useless actions end
 //		
-		possibleActions.add(createAction(false, false, false, true, false, false)); // Jump
+		possibleActions.add(Util.createAction(false, false, false, true, false, false)); // Jump
 //	
-		possibleActions.add(createAction(false, true, false, false, false, false)); // Right
-		possibleActions.add(createAction(false, true, false, false, true, false)); // Right + run
-		possibleActions.add(createAction(false, true, false, true, false, false)); // Right + jump
-		possibleActions.add(createAction(false, true, false, true, true, false)); // Right + jump + run
+		possibleActions.add(Util.createAction(false, true, false, false, false, false)); // Right
+		possibleActions.add(Util.createAction(false, true, false, false, true, false)); // Right + run
+		possibleActions.add(Util.createAction(false, true, false, true, false, false)); // Right + jump
+		possibleActions.add(Util.createAction(false, true, false, true, true, false)); // Right + jump + run
 ////	
-		possibleActions.add(createAction(true, false, false, false, false, false)); // Left
-		possibleActions.add(createAction(true, false, false, false, true, false)); //Left + run
-		possibleActions.add(createAction(true, false, false, true, false, false)); // Left + jump
-		possibleActions.add(createAction(true, false, false, true, true, false)); //Left + jump + run
+		possibleActions.add(Util.createAction(true, false, false, false, false, false)); // Left
+		possibleActions.add(Util.createAction(true, false, false, false, true, false)); //Left + run
+		possibleActions.add(Util.createAction(true, false, false, true, false, false)); // Left + jump
+		possibleActions.add(Util.createAction(true, false, false, true, true, false)); //Left + jump + run
 		
 		return possibleActions;
 	}
 	
-	/**
-	 * @param left
-	 * @param right
-	 * @param down
-	 * @param jump
-	 * @param run
-	 * @return A combination of button presses making up an action, represented by a boolean array.
-	 */
-	public boolean[] createAction(boolean left, boolean right, boolean down, boolean jump, boolean run, boolean up)
-	{
-		boolean[] action = new boolean[6];
-		action[Mario.KEY_LEFT] = left;
-		action[Mario.KEY_RIGHT] = right;
-		action[Mario.KEY_DOWN] = down;
-    	action[Mario.KEY_JUMP] = jump;
-    	action[Mario.KEY_SPEED] = run;
-    	action[Mario.KEY_UP] = up;
-    	
-    	return action;
-	}
+
 	
 	/**
 	 * @return String of the combination of buttons represented by parent action.
 	 */
 	private String parentActionAsString()
 	{
-		String s = "[" 
-				+ (parentAction[Mario.KEY_LEFT] ? "l" : "")
-				+ (parentAction[Mario.KEY_RIGHT] ? "r" : "")
-				+ (parentAction[Mario.KEY_DOWN] ? "d" : "") 
-				+ (parentAction[Mario.KEY_JUMP] ? "j" : "")
-				+ (parentAction[Mario.KEY_SPEED] ? "s" : "")
-				+ (parentAction[Mario.KEY_UP] ? "u" : "") + "]";
-		
-		return s;
+		return Util.actionAsString(parentAction);
 	}
 	
 	

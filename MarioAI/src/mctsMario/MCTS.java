@@ -3,29 +3,34 @@ package mctsMario;
 import java.util.ArrayList;
 import java.util.Random;
 
-import ch.idsia.benchmark.mario.engine.MarioVisualComponent;
 import mctsMario.sprites.Mario;
 
+/**
+ * 
+ * @author Lasse C. A.
+ * @author Hlynur H.
+ */
 public class MCTS 
 {
-	// Max allowed time (in ms) to run the search. Algorithm needs a little time to select best child and exit.
-	private int timeLimit = 19;
-	
-	// Exploration coefficient (default ~0.707107...)
-	// "the value (...) was shown to satisfy the Hoeffding ineqality with rewards in the range [0,1]" (Browne et al., 2012)
-	private static final float C = 0.7f;//(float) (1.0/Math.sqrt(2));
-	
-	// The minimum number of visits every node should have before it will be rated by UCT.
-	private static final int CONFIDENCE_THRESHOLD = 1;
-	
-	// Number of random steps to perform when simulating in default policy.
-	private static final int MAX_SIMULATION_TICKS = 10;
-	
-	// The number of times the same action should be repeated in a row while simulating.
-	private static final int REPETITIONS = 1;
-	
-	// Whether to select best child based on max value (rather than average value).
-	private static final boolean VALUE_BY_MAX = false;
+	// Constants moved to Util class
+//	// Max allowed time (in ms) to run the search. Algorithm needs a little time to select best child and exit.
+//	private int timeLimit = 19;
+//	
+//	// Exploration coefficient (default ~0.707107...)
+//	// "the value (...) was shown to satisfy the Hoeffding ineqality with rewards in the range [0,1]" (Browne et al., 2012)
+//	private static final float C = 0.3f;//(float) (1.0/Math.sqrt(2));
+//	
+//	// The minimum number of visits every node should have before it will be rated by UCT.
+//	private static final int CONFIDENCE_THRESHOLD = 1;
+//	
+//	// Number of random steps to perform when simulating in default policy.
+//	private static final int MAX_SIMULATION_TICKS = 10;
+//	
+//	// The number of times the same action should be repeated in a row while simulating.
+//	private static final int REPETITIONS = 1;
+//	
+//	// Whether to select best child based on max value (rather than average value).
+//	private static final boolean VALUE_BY_MAX = false;
 	
 	// Small float to break ties between equal UCT values.
 	// Idea of tiebreaker inspired by http://mcts.ai/code/java.html
@@ -47,38 +52,32 @@ public class MCTS
 	 */
 	public boolean[] search(LevelScene levelScene)
 	{	
-//		LevelScene levelSceneClone = null;
-//		try{
-//			levelSceneClone = (LevelScene) levelScene.clone();
-//		}catch (CloneNotSupportedException e){
-//			e.printStackTrace();
-//		}
 		Node rootNode = new Node(levelScene, null);
 		
 		searchCounter = 0;
 		maxDepth = 0;
 		
-		long dueTime = System.currentTimeMillis() + timeLimit;
+		long dueTime = System.currentTimeMillis() + Util.TIME_LIMIT;
 		while (System.currentTimeMillis() < dueTime)
 		{
 			searchCounter++; //TEST/DEBUG
 
 			Node v1 = treePolicy(rootNode);
-			float reward = defaultPolicy(v1, MAX_SIMULATION_TICKS);
+			float reward = defaultPolicy(v1, Util.MAX_SIMULATION_TICKS);
 			
 			backpropagate(v1, reward);
 		}
-		//TEST/DEBUG
-//		System.out.println("TIME'S UP - Iterations: " + searchCounter + "\t maxDepth = " + maxDepth);
 		
 		// Get child with the highest reward (by using value of 0 for C).
 		Node bestChild = getBestChild(rootNode, 0);
 //		Node mostVisitedChild = getMostVisitedChild(rootNode);
 
-		// Return action corresponding to best child.
-//		if (true) System.out.println("In main search | rootNode children: " + '\n' + rootNode.childrenAsString());
-//		if (true) System.out.println("In main search | Best child with parent action = " + actionAsString(bestChild.parentAction)); // TEST/DEBUG
+		//TEST/DEBUG
+//		System.out.println("TIME'S UP - Iterations: " + searchCounter + "\t maxDepth = " + maxDepth);
+//		System.out.println("In main search | rootNode children: " + '\n' + rootNode.childrenAsString());
+//		System.out.println("In main search | Best child with parent action = " + actionAsString(bestChild.parentAction)); // TEST/DEBUG
 		
+		// Return action corresponding to best child.
 		return bestChild.parentAction;
 //		return mostVisitedChild.parentAction;
 	}
@@ -108,7 +107,7 @@ public class MCTS
 			else
 			{
 				// Select best child according to UCT.
-				v = getBestChild(v, C);
+				v = getBestChild(v, Util.C);
 			}
 		}
 
@@ -118,9 +117,10 @@ public class MCTS
 	
 	
 	/**
-	 * Get an untried action from state represented by this node, and add it as a child to this node.
+	 * Get an untried action from state represented by this node and add a new child to it, representing the world state
+	 * after taking the untried action.
 	 * @param v
-	 * @return The child representing the untried action of Node v.
+	 * @return The child representing the world state after the untried action of Node v.
 	 */
 	private Node expand(Node v)
 	{
@@ -141,10 +141,9 @@ public class MCTS
 		v.children.add(child);
 		
 		
-		
 		//--- TEST/DEBUG CODE
 //		// This should be equal to parent since its fresh from the clone
-		int marioModeBefore = child.levelScene.getMarioMode();
+//		int marioModeBefore = child.levelScene.getMarioMode();
 //
 //		if (marioModeBefore != v.levelScene.getMarioMode())
 //		{
@@ -156,38 +155,40 @@ public class MCTS
 //			// Should not trigger, since marioModeBefore has the value of child Mode
 //			System.out.println("child Mode != marioModeBefore");
 //		}
+//		float mX = child.levelScene.getMarioFloatPos()[0];
+//		float mY = child.levelScene.getMarioFloatPos()[1];7
 		//--- TEST/DEBUG CODE END ---
-//
-//		// Advance the levelScene 1 tick with the new action. 
+		
+		
+//		// Advance the levelScene with the new action. 
 //		// This child then represents the world state after taking that action.
-		float mX = child.levelScene.getMarioFloatPos()[0];
-		float mY = child.levelScene.getMarioFloatPos()[1];
-		for (int i = 0; i < REPETITIONS; i++) 
+		for (int i = 0; i < Util.REPETITIONS; i++) 
 		{
+			child.levelScene.advanceStep(untriedAction);
 		}
-		child.levelScene.advanceStep(untriedAction);
+		
 
-		
-//		System.out.println("expand |\t" + child.levelScene + " | before: " + (int)mX + "," + (int)mY
-//				+ " -- After " + REPETITIONS + " steps : " + actionAsString(untriedAction) + " " 
-//				+ (int)child.levelScene.getMarioFloatPos()[0] + "," + (int)child.levelScene.getMarioFloatPos()[1]);
-		
 		// Necessary? this should already happen when cloning the levelscene...
 		child.levelScene.mario.invulnerableTime = v.levelScene.mario.invulnerableTime;
-//
+
+		
 		//--- TEST/DEBUG CODE
+//		System.out.println("expand |\t" + child.levelScene + " | before: " + (int)mX + "," + (int)mY
+//		+ " -- After " + REPETITIONS + " steps : " + actionAsString(untriedAction) + " " 
+//		+ (int)child.levelScene.getMarioFloatPos()[0] + "," + (int)child.levelScene.getMarioFloatPos()[1]);
+
 //		if (marioModeBefore != v.levelScene.getMarioMode())
 //		{
 ////			 Should not trigger, since neither parent nor marioModeBefore should be affected by child tick
 //			System.out.println("### After tick ### parent Mode (" + v.levelScene.getMarioMode()+")"
 //					+ "!= marioModeBefore (" + marioModeBefore + ")");
 //		}
-		if (child.levelScene.getMarioMode() != marioModeBefore)
-		{
-//			 Should trigger! Because child was ticked and marioModeBefore never changes.
-			System.out.println("--- After tick --- child Mode ("+child.levelScene.getMarioMode()+")" 
-		+ " != marioModeBefore (" + marioModeBefore + ")");
-		}
+//		if (child.levelScene.getMarioMode() != marioModeBefore)
+//		{
+////			 Should trigger! Because child was ticked and marioModeBefore never changes.
+//			System.out.println("--- After tick --- child Mode ("+child.levelScene.getMarioMode()+")" 
+//		+ " != marioModeBefore (" + marioModeBefore + ")");
+//		}
 //
 //		if (child.levelScene.getMarioMode() != v.levelScene.getMarioMode())
 //		{
@@ -195,29 +196,20 @@ public class MCTS
 //		}
 		//--- TEST/DEBUG CODE END ---
 		
+		
 		return child;
 	}
 	
 	
 	/**
-	 * TODO: Find a better solution. getUntriedAction is called right after in expand as well...
 	 * @param v
 	 * @return Whether or not every possible action has been added as a child to this node.
 	 */
 	private boolean isNodeFullyExpanded(Node v)
 	{
+		//TODO: Find a better solution. getUntriedAction is called right after in expand as well...
 		boolean[] a = getUntriedAction(v);
 		
-		// TEST/DEBUG
-		// If the untried action returned is a 'do-nothing' action (all buttons false), then no untried actions exist.
-//		for (int i = 0; i < a.length; i++) {
-//			if (a[i] == true)
-//			{
-////				System.out.println("False!"); //TEST/DEBUG
-////				System.out.println(); //TEST/DEBUG
-//				return false;
-//			}
-//		}
 		// If action is null, no untried action exists, and node is fully expanded.
 		if (a == null)
 		{
@@ -227,17 +219,13 @@ public class MCTS
 		{
 			return false;
 		}
-
-			// If no buttons in the actions are set to true, this is a do-nothing action, and node is fully expanded.
-//		return true;
-		
 	}
 	
 	
 	/**
 	 * Gets a random untried action from Node v.
 	 * @param v
-	 * @return An untried action from Node v. Returns null action if no untried actions exist.
+	 * @return A random untried action from Node v. Returns null action if no untried actions exist.
 	 */
 	private boolean[] getUntriedAction(Node v)
 	{
@@ -255,7 +243,6 @@ public class MCTS
 				}
 			}
 			// No child found representing this action, so it is untried.
-//			return possibleAction;
 			untriedActions.add(a);
 		}
 		
@@ -281,20 +268,33 @@ public class MCTS
 		return levelScene.isLevelFinished(); //v.levelScene.mario.isDead() ||
 	}
 	
+	/**
+	 * NOTE: TURNED OFF ATM. ALWAYS RETURNS FALSE.
+	 * Checks whether or not Mario is currently positioned in a gap in the given levelscene.
+	 * Gap coordinates are given relative to Mario and in cell coordinates rather than float coordinates.
+	 * @param levelScene
+	 * @return Whether Mario is currently within a gap in the current levelscene.
+	 */
 	private boolean marioInGap(LevelScene levelScene)
 	{
-		// If gap is in sight
+		// If gap is in sight.
 		if (levelScene.gapY != Integer.MIN_VALUE && levelScene.gapStartX != Integer.MIN_VALUE)
 		{
 			// If Mario's position is inside a gap (gap positions are relative to Mario).
 			if (levelScene.gapY <= 1 && levelScene.gapStartX <= 0 && levelScene.gapEndX >= 0)
 			{
-				return true;
+				return false; // Turned off atm
 			}
 		}
 		return false;
 	}
 	
+	/**
+	 * Checks whether Mario lost Mode (fire, large, small) between the two given Modes.
+	 * @param marioModeBefore
+	 * @param marioModeAfter
+	 * @return Whether Mario shrunk between the two given modes.
+	 */
 	private boolean marioShrunk(int marioModeBefore, int marioModeAfter)
 	{
 		return (marioModeBefore > marioModeAfter);
@@ -349,7 +349,7 @@ public class MCTS
 			
 			randomAction = v.getRandomAction();
 			// Repeat the random action.
-			for (int j = 0; j < REPETITIONS && i < maxTicks; j++) 
+			for (int j = 0; j < Util.REPETITIONS && i < maxTicks; j++) 
 			{
 				levelSceneClone.advanceStep(randomAction);
 				
@@ -411,37 +411,27 @@ public class MCTS
 		 * (+ REPETITIONS to account for the ticks done in expand().)
 		 */
 		// The minimum reward for non-terminal states (including standing still and going left) is 0.5.
-		float reward = 0.3f;
+		float reward = 0.4f;
 		float xDistanceCovered = levelScene.getMarioFloatPos()[0] - marioFirstX;
 		float yDistanceCovered = marioFirstY - levelScene.getMarioFloatPos()[1];
 		
 		// If Mario made progress towards the right, he is rewarded more.
-		if (xDistanceCovered >= 0)
+//		if (xDistanceCovered >= 0)
 		{
-			reward += 0.7f * (xDistanceCovered/(11*(ticksSimulated+REPETITIONS)));
+			reward += 0.4f * (xDistanceCovered/(11*(ticksSimulated+Util.REPETITIONS)));
+		}
+		if (yDistanceCovered >= 0)
+		{
+//			reward += 0.2f * (yDistanceCovered/(13.3f*(ticksSimulated+REPETITIONS)));
 		}
 		// If Mario is in a gap, reduce his reward drastically. (Testing not having it set reward to 0).
 		if (marioInGap(levelScene))
 		{
-//			if (ticksSimulated > 0)
-			{
-			}
-//			reward *= 0.1f;
-			// The maximum upwards y-movement Mario can make in one tick is about 13.3.
-			if (yDistanceCovered >= 0)
-			{
-				reward = (yDistanceCovered/(13.3f*(ticksSimulated+REPETITIONS)));
-			}
-			else
-			{
-				reward = 0;
-			}
-			System.out.println("in gap = " + ticksSimulated + ", reward = " + reward );
+			reward = 0;
 		}
 				
-		if (Util.lcaDebug)System.out.println("In calculateReward | FirstX = " + marioFirstX + ", currentX = " + levelScene.mario.x);
-		if (Util.lcaDebug)System.out.println("In calculateReward | Distance covered = " + xDistanceCovered);
-//		System.out.println();
+//		if (Util.lcaDebug)System.out.println("In calculateReward | FirstX = " + marioFirstX + ", currentX = " + levelScene.mario.x);
+//		if (Util.lcaDebug)System.out.println("In calculateReward | Distance covered = " + xDistanceCovered);
 		
 		return reward;
 	}
@@ -499,7 +489,7 @@ public class MCTS
 		float maxUCT = 0;
 		for (Node child : v.children)
 		{
-			float thisUCT = calculateUCTValue(child, c, VALUE_BY_MAX);
+			float thisUCT = calculateUCTValue(child, c, Util.VALUE_BY_MAX);
 			
 			if (thisUCT > maxUCT)
 			{
@@ -551,7 +541,7 @@ public class MCTS
 	private float calculateUCTValue(Node n, float c, boolean goByMaxValue)
 	{
 		// Unvisited children should be assigned highest possible value to ensure that all children are considered at least once (Browne et al. 2012)
-		if (n.timesVisited < CONFIDENCE_THRESHOLD)
+		if (n.timesVisited < Util.CONFIDENCE_THRESHOLD)
 		{
 			return Float.MAX_VALUE - (rng.nextFloat() * tieBreaker);
 		}
@@ -565,22 +555,5 @@ public class MCTS
 		float explorationTerm = c * ((float) Math.sqrt((2 * Math.log(n.parent.timesVisited))/n.timesVisited));
 		
 		return valueTerm + explorationTerm + (rng.nextFloat() * tieBreaker);
-	}
-	
-	/**
-	 * @param a
-	 * @return Action a as string in the format [drljsu]
-	 */
-	private String actionAsString(boolean[] a)
-	{
-		String s = "[" 
-			+ (a[Mario.KEY_LEFT] ? "l" : "")
-			+ (a[Mario.KEY_RIGHT] ? "r" : "")
-			+ (a[Mario.KEY_DOWN] ? "d" : "") 
-			+ (a[Mario.KEY_JUMP] ? "j" : "")
-			+ (a[Mario.KEY_SPEED] ? "s" : "")
-			+ (a[Mario.KEY_UP] ? "u" : "") + "]";
-			
-		return s;
 	}
 }
