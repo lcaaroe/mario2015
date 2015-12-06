@@ -141,6 +141,9 @@ public final class LevelScene implements SpriteContext, Cloneable
         return clone;
     }
     
+	
+	//Basic Method to clone the LevelScene
+	//Made by Robin Baumgarten but edited slightly to work for a newer Framework.
     @Override protected Object clone() throws CloneNotSupportedException 
     {
     	LevelScene c = (LevelScene) super.clone();
