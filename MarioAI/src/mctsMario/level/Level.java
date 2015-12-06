@@ -173,15 +173,13 @@ public Level(int length, int height)
 //        System.out.println("observation = " + observation);
 }
 
+//Basic Clone method of the Level.
+//Originally made by Robin Baumgarten but edited for this project.
 @Override
 public Object clone() throws CloneNotSupportedException
 {
-	//System.out.println("Cloning level, wh: "+width + " "+height);
 	Level l = (Level) super.clone();
-//	List<int[]> clone = new ArrayList<int[]>(modifiedMapTiles.size());
-//	for(int[] item: modifiedMapTiles) 
-//		clone.add((int[]) item.clone());
-//	l.modifiedMapTiles = clone;
+
 	return l;
 }
 

@@ -162,6 +162,8 @@ public void move()
     y += ya;
 }
 
+//Basic Clone method of the Sprite.
+//This function was made by Robin Baumgarten.
 @Override
 public Object clone() throws CloneNotSupportedException
 {

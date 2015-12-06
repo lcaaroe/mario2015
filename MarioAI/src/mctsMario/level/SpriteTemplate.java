@@ -49,11 +49,12 @@ public int getType()
 
 private int type;
 
+//Basic Clone method of the SpriteTemplate.
+//Originally made by Robin Baumgarten but edited for this project.
 @Override
 public Object clone() throws CloneNotSupportedException
 {
 	return super.clone();
-	
 }
 
 public SpriteTemplate(int type)

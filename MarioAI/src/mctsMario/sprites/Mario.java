@@ -103,7 +103,8 @@ public final class Mario extends Sprite implements Cloneable
 		windCoeff = marioAIOptions.getWind();
 	}
 
-	//Made by Robin Baumgarten.
+	//Basic Clone method of Mario.
+	//This function was made by Robin Baumgarten.
 	@Override
 	public Object clone() throws CloneNotSupportedException
 	{
@@ -115,6 +116,8 @@ public final class Mario extends Sprite implements Cloneable
 		return m;    	
 	}
 
+	//Return the current mode of Mario
+	//Made by Robin Baumgarten.
 	public int getMode()
 	{
 		return ((large) ? 1 : 0) + ((fire) ? 1 : 0);

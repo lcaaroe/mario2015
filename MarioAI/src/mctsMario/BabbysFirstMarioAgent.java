@@ -43,21 +43,14 @@ import mctsMario.sprites.Mario;
  */
 public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 {
+	//Variables that are needed for the simulator to work properly
 	private float lastX = 0;
 	private float lastY = 0;
 	private int invulnerableTime = 0;
-	private int prevMarioState = 0;
-	
-	// -- LCA TEST
-//	private int i = 0;
-//	private float marioFirstX = 0;
-	private float marioFirstY = 0;
-	// -- LCA TEST END
-	
+	private int prevMarioState = 0;	
 	MCTS mcts;
 	
-//	private mctsSimulator simulator;
-	
+	//Constructor.
 	public BabbysFirstMarioAgent()
 	{
 		super("Babby");
@@ -69,29 +62,19 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 
 	public boolean[] getAction()
 	{
+		//We get the All the information regarding the environment from the MarioEnvironment
 		Environment environment = MarioEnvironment.getInstance();
 		byte[][] cloned = environment.getLevelSceneObservationZ(1);
 		float[] enemies = environment.getEnemiesFloatPos();
 		float[] realMarioPos = environment.getMarioFloatPos();
 
-		
-		
-		
-//		for (int i = 0; i < cloned.length; i++) {
-//			String test = "";
-//			for (int j = 0; j < cloned[i].length; j++) {
-//				test += cloned[i][j]+",";
-//			}
-//			System.out.println(test);
-//		}
-//		System.out.println("======");
-		
+		//Create a new Levelscene with a default size and reset it to initialize everything needed.
 		LevelScene clonedLevel  = new LevelScene();
 		clonedLevel.level = new Level(1500,15);
 		clonedLevel.resetDefault();
 		
-//		clonedLevel.advanceStep(action);
-		
+		//Set the Mario position in the new levelScene according to the environment.
+		//Calculate Marios current x and y acceleration by using the current X and Y and LastX and LastY variables.
 		clonedLevel.mario.x = realMarioPos[0];		
 		clonedLevel.mario.xa = (realMarioPos[0] - lastX) *0.89f;		
 		if (Math.abs(clonedLevel.mario.y - realMarioPos[1]) > 0.1f)
@@ -99,8 +82,12 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		clonedLevel.mario.y = realMarioPos[1];
 		
 		
+		//These are custom function which we got from Baumgarten, we had to change them a bit
+		//in order for them to work for the new framework.
+		//These functions create the levelScene you can see on the screen as well as setting the enemies to the correct positions.
 		clonedLevel.setLevelScene(cloned);
 		clonedLevel.setEnemies(enemies);
+		
 		//update the mario mode according to the environment.
 		switch (environment.getMarioMode()) {
 		case 1:
@@ -117,46 +104,28 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 			break;
 		}
 		
+		//Checks the previous Mario Sate and checks if that has changed since Last getAction.
+		//This is to ensure that the simulator gets the correct Invulerable Timer for Mario.
 		if(environment.getMarioMode() != prevMarioState)
 		{
-//			System.out.println("Lost health during last aciton");
 			invulnerableTime = 32;
 		}
 
+		//At everyTick make sure that mario gets the invulerableTime as well as tick it down.
 		if(invulnerableTime > 0)
 		{
 			clonedLevel.mario.invulnerableTime = invulnerableTime;
 			invulnerableTime--;
 		}
+		
+		//Save the currentPosition of Mario for future use.
 		lastX = realMarioPos[0];
 		lastY = realMarioPos[1];
 		
-//		System.out.println("Mario status = " + environment.getMarioStatus() + "(environment babby)");
-//		System.out.println("Mario status = " + clonedLevel.getMarioStatus() + "(clonedLevel babby)");
-		
-//		System.out.println("gapStartX = " + clonedLevel.gapStartX + ", gapEndX = " + clonedLevel.gapEndX
-//				+ ", gapY = " + clonedLevel.gapY + ", marioPosY = " + clonedLevel.getMarioFloatPos()[1]);
-		
-//		System.out.println("Babby pos: " + environment.getMarioFloatPos()[0] + "," + environment.getMarioFloatPos()[1]
-//				+ " | distance covered = " + (marioFirstY - environment.getMarioFloatPos()[1]));
-//		marioFirstY = environment.getMarioFloatPos()[1];
-
-//		System.out.println("Babby positions = " + clonedLevel.getMarioFloatPos()[0] + "," + clonedLevel.getMarioFloatPos()[1]
-//				+ " | Babby LS = " + clonedLevel);
-
+		//Get the best action from the MCTS algorithm
 		boolean[] newAction = mcts.search(clonedLevel);
-//		System.out.println("Mario status = " + clonedLevel.getMarioStatus() + "(clonedLevel babby after mcts)");
 		
-//		if (environment.getMarioStatus() == Mario.STATUS_WIN)
-//		{
-//			System.out.println("Babby saw the win");
-//		}
-//		action = mcts.search(clonedLevel);
-//		//System.out.println("Action length = " + newAction.length);
-//		for (int i = 0; i < newAction.length; ++i)
-//			newAction[i] = false;
-//		newAction[Mario.KEY_RIGHT] = true;
-		
+		//Save the current State of Mario for future use.
 		prevMarioState = environment.getMarioMode();
 		return newAction;
 	}
@@ -168,7 +137,5 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 			action[i] = false;
 		
 		prevMarioState = 2;
-//		action[Mario.KEY_RIGHT] = true;
-//	    action[Mario.KEY_SPEED] = true;
 	}
 }
