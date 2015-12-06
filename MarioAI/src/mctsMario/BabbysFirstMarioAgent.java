@@ -51,6 +51,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 	// -- LCA TEST
 //	private int i = 0;
 //	private float marioFirstX = 0;
+	private float marioFirstY = 0;
 	// -- LCA TEST END
 	
 	MCTS mcts;
@@ -89,7 +90,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		clonedLevel.level = new Level(1500,15);
 		clonedLevel.resetDefault();
 		
-		clonedLevel.advanceStep(action);
+//		clonedLevel.advanceStep(action);
 		
 		clonedLevel.mario.x = realMarioPos[0];		
 		clonedLevel.mario.xa = (realMarioPos[0] - lastX) *0.89f;		
@@ -118,7 +119,7 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		
 		if(environment.getMarioMode() != prevMarioState)
 		{
-			System.out.println("Lost health during last aciton");
+//			System.out.println("Lost health during last aciton");
 			invulnerableTime = 32;
 		}
 
@@ -130,60 +131,21 @@ public class BabbysFirstMarioAgent extends BasicMarioAIAgent implements Agent
 		lastX = realMarioPos[0];
 		lastY = realMarioPos[1];
 		
-//		if (Util.ornDebug) System.out.println("Action: [" 
-//		+ (action[Mario.KEY_DOWN] ? "d" : "") 
-//		+ (action[Mario.KEY_RIGHT] ? "r" : "")
-//		+ (action[Mario.KEY_LEFT] ? "l" : "")
-//		+ (action[Mario.KEY_JUMP] ? "j" : "")
-//		+ (action[Mario.KEY_SPEED] ? "s" : "") + "]");
-		
-		
-		// -- Lasses test agent shit BEGIN --
-//		if (environment.getMarioStatus() == Mario.STATUS_DEAD || environment.getMarioStatus() == Mario.STATUS_WIN)
-//		{
-//			System.out.println("LOLOLOLO");
-//			System.out.println("isLevelFinished = " + environment.isLevelFinished());
-//		}
-//
-//		
-////		if (Util.lcaDebug) System.out.println("i = " + i + " | i%10 = " + i%10);
-//		
-//		// Introducing ... shitty jumping agent! Jumps every 20 frames for 3 frames in a row.
-//		if ((i % 20 == 0) || (i % 20 == 1) || (i % 20 == 2))
-//		{
-////			if (Util.lcaDebug) System.out.println("Jumping allowed");
-//			action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
-//		}
-//		else
-//		{
-//			action[Mario.KEY_JUMP] = false;
-//		}
-//		i++;
-//		action[Mario.KEY_RIGHT] = true;
-//		
-//		// Measure how far Mario got -FOR TESTING PURPOSES-
-//		if (i % 2 == 0)
-//		{
-//			marioFirstX = realMarioPos[0];
-//		}
-//		// After one frame, see how far mario got
-//		if (i % 2 == 1)
-//		{
-//			System.out.println("FirstX = " + marioFirstX + ", currentX = " + realMarioPos[0] + ". Mario covered: " + (realMarioPos[0] - marioFirstX)+  " units.");
-//		}
-		// -- Lasses test agent shit END --
 //		System.out.println("Mario status = " + environment.getMarioStatus() + "(environment babby)");
 //		System.out.println("Mario status = " + clonedLevel.getMarioStatus() + "(clonedLevel babby)");
 		
-		System.out.println("gapStartX = " + clonedLevel.gapStartX + ", gapEndX = " + clonedLevel.gapEndX
-				+ ", gapY = " + clonedLevel.gapY + ", marioPosY = " + clonedLevel.getMarioFloatPos()[1]);
-		if (clonedLevel.gapY <= 1 && clonedLevel.gapStartX <= 0)//&& clonedLevel.gapStartX == 0 && clonedLevel.gapEndX)
-		{
-			System.out.println("IN GAP");
-		}
+//		System.out.println("gapStartX = " + clonedLevel.gapStartX + ", gapEndX = " + clonedLevel.gapEndX
+//				+ ", gapY = " + clonedLevel.gapY + ", marioPosY = " + clonedLevel.getMarioFloatPos()[1]);
 		
+//		System.out.println("Babby pos: " + environment.getMarioFloatPos()[0] + "," + environment.getMarioFloatPos()[1]
+//				+ " | distance covered = " + (marioFirstY - environment.getMarioFloatPos()[1]));
+//		marioFirstY = environment.getMarioFloatPos()[1];
+
+//		System.out.println("Babby positions = " + clonedLevel.getMarioFloatPos()[0] + "," + clonedLevel.getMarioFloatPos()[1]
+//				+ " | Babby LS = " + clonedLevel);
+
 		boolean[] newAction = mcts.search(clonedLevel);
-//		System.out.println("Mario status = " + clonedL7evel.getMarioStatus() + "(clonedLevel babby after mcts)");
+//		System.out.println("Mario status = " + clonedLevel.getMarioStatus() + "(clonedLevel babby after mcts)");
 		
 //		if (environment.getMarioStatus() == Mario.STATUS_WIN)
 //		{

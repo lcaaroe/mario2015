@@ -35,6 +35,7 @@ import ch.idsia.tools.MarioAIOptions; /**
  * Date: May 5, 2009
  * Time: 12:46:43 PM
  */
+import ch.idsia.unittests.CmdLineOptionsTest;
 import mctsMario.BabbysFirstMarioAgent;
 
 /**
@@ -62,6 +63,7 @@ public final class Play
 public static void main(String[] args)
 {
     final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
+//    marioAIOptions.
     System.out.println(marioAIOptions.getAgentFullLoadName());
     marioAIOptions.setAgent(new BabbysFirstMarioAgent());
     final BasicTask basicTask = new BasicTask(marioAIOptions);
@@ -71,9 +73,10 @@ public static void main(String[] args)
 //        basicTask.runSingleEpisode();
     // run 1 episode with same options, each time giving output of Evaluation info.
     // verbose = false
-    basicTask.doEpisodes(10, false, 1);
+    basicTask.doEpisodes(1, false, 1);
     System.out.println("\nEvaluationInfo: \n" + basicTask.getEnvironment().getEvaluationInfoAsString());
     System.out.println("\nCustom : \n" + basicTask.getEnvironment().getEvaluationInfo().computeWeightedFitness(m));
+    System.out.println("Distance passed = " + basicTask.getEvaluationInfo().computeDistancePassed());
     System.exit(0);
 }
 }

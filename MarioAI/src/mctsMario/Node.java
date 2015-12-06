@@ -15,10 +15,11 @@ public class Node
 	
 	public int timesVisited = 0;
 	public float reward = 0;
+	public float maxReward = 0;
 	
 	public ArrayList<boolean[]> actions = new ArrayList<boolean[]>();
 	
-	private Random rng = new Random();
+ 	private Random rng = new Random();
 	
 	
 	// TEST
@@ -108,11 +109,11 @@ public class Node
 	}
 	
 	/**
-	 * @return Random action with 75% chance to be an action leading up or right.
+	 * @return Random action with 80% chance to be an action leading up or right.
 	 */
 	public boolean[] getRandomActionBiased()
 	{
-		if (rng.nextInt(100) < 75)
+		if (rng.nextInt(100) < 80)
 		{
 			// Action indices 0-4 possible actions are right and/or jump.
 			return actions.get(rng.nextInt(5));
@@ -160,6 +161,7 @@ public class Node
 //		possibleActions.add(createAction(false, false, true, false, false, false)); // Down
 //		possibleActions.add(createAction(true, true, false, false, false, false)); // Right + Left
 //		possibleActions.add(createAction(false, false, false, false, false, true)); // Up
+//		possibleActions.add(createAction(false, false, true, false, false, true)); // Up + down
 //		possibleActions.add(createAction(false, false, false, false, true, false)); // Shoot
 		// Useless actions end
 //		
@@ -169,10 +171,9 @@ public class Node
 		possibleActions.add(createAction(false, true, false, false, true, false)); // Right + run
 		possibleActions.add(createAction(false, true, false, true, false, false)); // Right + jump
 		possibleActions.add(createAction(false, true, false, true, true, false)); // Right + jump + run
-//	
+////	
 		possibleActions.add(createAction(true, false, false, false, false, false)); // Left
-//		possibleActions.add(createAction(true, false, false, false, true, false)); //Left + run
-
+		possibleActions.add(createAction(true, false, false, false, true, false)); //Left + run
 		possibleActions.add(createAction(true, false, false, true, false, false)); // Left + jump
 		possibleActions.add(createAction(true, false, false, true, true, false)); //Left + jump + run
 		
