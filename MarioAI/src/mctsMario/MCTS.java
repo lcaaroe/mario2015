@@ -258,7 +258,7 @@ public class MCTS
 	
 	
 	/**
-	 * Checks whether the node represents a state terminal game state (e.g. Mario dead or won).
+	 * Checks whether the node represents a state terminal game state (game is over either from win or loss).
 	 * @param v
 	 * @return Whether or not current states represents a terminal game state.
 	 */
@@ -266,6 +266,16 @@ public class MCTS
 	{
 		// Level is finished is Mario won or is dead.
 		return levelScene.isLevelFinished(); //v.levelScene.mario.isDead() ||
+	}
+	
+	/**
+	 * Checks whether mario is dead in the current levelscene.
+	 * @param levelScene
+	 * @return Whether or not Mario is dead in the given levelscene.
+	 */
+	private boolean isMarioDead(LevelScene levelScene)
+	{
+		return (levelScene.mario.deathTime > 0 || levelScene.getMarioStatus() == Mario.STATUS_DEAD);
 	}
 	
 	/**
@@ -341,7 +351,7 @@ public class MCTS
 		boolean[] randomAction = null;
 		while (i < maxTicks)
 		{
-			if (isTerminalState(levelSceneClone) || marioShrunk(marioFirstMode, levelSceneClone.getMarioMode()))
+			if (isMarioDead(levelSceneClone) || marioShrunk(marioFirstMode, levelSceneClone.getMarioMode()))
 			{
 				// If terminal state is reached, break out and just return 0
 				return 0;
@@ -388,7 +398,7 @@ public class MCTS
 	private float calculateReward(LevelScene levelScene, float marioFirstX, float marioFirstY, int marioFirstMode, int ticksSimulated)
 	{
 		// If Mario died, reward 0.
-		if (levelScene.getMarioStatus() == Mario.STATUS_DEAD)
+		if (isMarioDead(levelScene))
 		{
 //			System.out.println("DEAD. ticks = " + ticksSimulated);
 			return 0;
