@@ -30,6 +30,7 @@ package ch.idsia.scenarios;
 import java.io.*;
 import java.util.ArrayList;
 
+import ch.idsia.agents.controllers.ForwardJumpingAgent;
 import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.benchmark.tasks.MarioCustomSystemOfValues;
 import ch.idsia.tools.MarioAIOptions; /**
@@ -58,10 +59,10 @@ public final class Play
 	/* Fields related to testing BabbysFirstMario */
 	
 	// Number of different levels to test.
-	static int levels = 2;
+	static int levels = 10;
 	
 	// Number of times to repeat each level before getting the score.
-	static int repetitionsPerLevel = 5;
+	static int repetitionsPerLevel = 10;
 	
 /**
  * <p>An entry point of the class.</p>
@@ -82,10 +83,11 @@ public static void main(String[] args)
     // Options for the test
 //    marioAIOptions.setVisualization(true);
     marioAIOptions.setFlatLevel(false);
-    marioAIOptions.setLevelDifficulty(2);
-    marioAIOptions.setLevelRandSeed(10);
+    marioAIOptions.setLevelDifficulty(3);
+    marioAIOptions.setLevelRandSeed(0);
     marioAIOptions.setLevelType(0);
-    marioAIOptions.setFPS(100);
+    marioAIOptions.setFPS(24);
+    marioAIOptions.setScale2X(true);
     
     final MarioCustomSystemOfValues m = new MarioCustomSystemOfValues();
 //    basicTask.runSingleEpisode(2);
@@ -111,6 +113,7 @@ public static void main(String[] args)
     	{
     		System.out.println("Running seed " + i + ", round " + j);
     		basicTask.runSingleEpisode(1);
+    		System.out.println("-- levelLength = " + basicTask.getEvaluationInfo().levelLength);
     		
     		float distancePassed = basicTask.getEvaluationInfo().computeDistancePassed();
     		distances[j] = distancePassed;
@@ -154,11 +157,11 @@ public static void main(String[] args)
     
     String agentName = marioAIOptions.getAgent().getName();
     // Print distance results.
-    writeResults(distanceScoresPerLevel, agentName, " distance", Util.paramsAsString(), Stats.mean(allDistancesArray),
+    writeResults(distanceScoresPerLevel, agentName, " distance -ld 3 -le 0", Util.paramsAsString(), Stats.mean(allDistancesArray),
     		Stats.variance(allDistancesArray), Stats.sdev(allDistancesArray), Stats.stderr(allDistancesArray));
    
     // Print timeLeft results.
-    writeResults(timeLeftScoresPerLevel, agentName, " timeLeft", Util.paramsAsString(), Stats.mean(allTimesArray), 
+    writeResults(timeLeftScoresPerLevel, agentName, " timeLeft -ld 3 -le 0", Util.paramsAsString(), Stats.mean(allTimesArray), 
     		Stats.variance(allTimesArray), Stats.sdev(allTimesArray), Stats.stderr(allTimesArray));
     
     System.out.println("Test finished - exiting.");
